@@ -1,0 +1,96 @@
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+
+<aside class="bg-white text-gray-800 h-full">
+  <!-- Container luar (box) -->
+  <div class="bg-red p-10 rounded-lg h-full">
+    <!-- Container dalam dengan padding -->
+    <div class="p-4">
+      <!-- Logo di atas menu menggunakan URL eksternal -->
+      <div class="mb-4 flex justify-center">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Yahata_Neji_Corporation_Logo.svg/2560px-Yahata_Neji_Corporation_Logo.svg.png" alt="Yahata Logo" class="w-32">
+      </div>
+      <ul>
+        <% if (user.role === 'admin') { %>
+          <div class="dashboard">
+            <li class="mt-20 mb-12 font-regular text-l">
+              <a href="/admin/dashboard" class="flex items-left justify-left">
+                <i class="fi fi-rr-house-chimney text-xl mr-1"></i>
+                <span class="ml-2">Dashboard</span>
+              </a>
+            </li>
+          </div>
+
+
+          <div class="user mt-10">
+            <li class="mb-6 font-regular text-xs text-gray-400">
+              <a href=" class="block text-left">USERS</a>
+            </li>
+            <div class="kelolauser">
+              <li class="font-regular text-l">
+                <a href="/admin/users" class="flex items-left justify-left">
+                  <i
+                    class="fi fi-rr-users text-xl mr-1"></i>
+                  <span class="ml-2">Users</span>
+                </a>
+              </li>
+            </div>
+          </div>
+
+
+          <div class="kelola mt-10">
+            <li class="mb-6 font-regular text-xs text-gray-400">
+              <a href="/aset" class="block text-left">KELOLA</a>
+            </li>
+
+            <div class="kelolaasset mb-6">
+              <li class="font-regular text-l">
+                <a href="/asset/new" class="flex items-left justify-left">
+                  <i class="fi fi-rr-briefcase text-xl mr-1"></i>
+                  <span class="ml-2">Asset</span>
+                </a>
+              </li>
+            </div>
+
+            <div class="buatpengaduan">
+              <li class="font-regular text-l">
+                <a href="/pengaduan/daftar" class="flex items-left justify-left">
+                  <i class="fi fi-rr-document text-xl mr-1"></i>
+                  <span class="ml-2">Pengaduan</span>
+                </a>
+              </li>
+            </div>
+
+          </div>
+
+
+
+
+        <% } else { %>
+          <div class="dashboard">
+            <li class="mt-16 mb-12 font-regular text-l">
+              <a href="/dashboard" class="flex items-left justify-left">
+                <i class="fi fi-rr-house-chimney text-xl mr-1"></i>
+                <span class="ml-2">Dashboard</span>
+              </a>
+            </li>
+          </div>
+          <div class="pengaduan mt-10">
+            <li class="mb-6 font-regular text-xs text-gray-400">
+              <a href="/pengaduan/daftar" class="block text-left">PENGADUAN</a>
+            </li>
+            <div class="buatpengaduan">
+              <li class="font-regular text-l">
+                <a href="/pengaduan/daftar" class="flex items-left justify-left">
+                  <i class="fi fi-rr-document text-xl mr-1"></i>
+                  <span class="ml-2">Pengaduan</span>
+                </a>
+              </li>
+            </div>
+          </div>
+        <% } %>
+      </ul>
+    </div>
+
+    
+  </div>
+</aside>

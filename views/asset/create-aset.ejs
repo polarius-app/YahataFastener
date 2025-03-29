@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Insert Asset</title>
+  <style>
+    label {
+      display: block;
+      margin: 8px 0 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 8px;
+    }
+    button {
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Insert Asset</h1>
+
+  <!-- Menampilkan pesan error (opsional) -->
+  <% if (error) { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+  <!-- 
+    Form ini mengirim data ke endpoint "/assets" (sesuaikan dengan route Anda).
+    Pastikan method POST di route menyesuaikan, dan jika ingin upload foto, gunakan enctype="multipart/form-data"
+  -->
+  <form action="/assets" method="POST" enctype="multipart/form-data">
+    <label for="no_asset">No Asset:</label>
+    <input type="text" name="no_asset" id="no_asset" required>
+
+    <label for="antivirus">Antivirus:</label>
+    <input type="text" name="antivirus" id="antivirus">
+
+    <label for="foto">Foto:</label>
+    <input type="file" name="foto" id="foto" accept="image/*">
+
+    <label for="hostname">Hostname:</label>
+    <input type="text" name="hostname" id="hostname">
+
+    <label for="user">User:</label>
+    <input type="text" name="user" id="user">
+
+    <!-- Contoh dropdown Departemen (Anda perlu mengirim departemenList dari controller) -->
+    <label for="departemen">Departemen:</label>
+    <select name="departemen" id="departemen">
+      <option value="">--Pilih Departemen--</option>
+      <% departemenList.forEach((dept) => { %>
+        <option value="<%= dept.id_departemen %>"><%= dept.nama_departemen %></option>
+      <% }) %>
+    </select>
+
+    <label for="tanggal_penempatan">Tanggal Penempatan:</label>
+    <input type="date" name="tanggal_penempatan" id="tanggal_penempatan">
+
+    <!-- Contoh dropdown Merek -->
+    <label for="merk">Merek:</label>
+    <select name="merk" id="merk">
+      <option value="">--Pilih Merek--</option>
+      <% merekList.forEach((merek) => { %>
+        <option value="<%= merek.id_merek %>"><%= merek.nama_merek %></option>
+      <% }) %>
+    </select>
+
+    <!-- Contoh dropdown Tipe Merek -->
+    <label for="tipe_merek">Tipe Merek:</label>
+    <select name="tipe_merek" id="tipe_merek">
+      <option value="">--Pilih Tipe Merek--</option>
+      <% tipeMerekList.forEach((tm) => { %>
+        <option value="<%= tm.id_tipe_merek %>"><%= tm.nama_tipe_merek %></option>
+      <% }) %>
+    </select>
+
+    <button type="submit">Simpan Asset</button>
+  </form>
+</body>
+</html>

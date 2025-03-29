@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User</title>
+</head>
+<body>
+    <h1>Create User</h1>
+    <form action="/admin/users/create" method="POST" enctype="multipart/form-data">
+        <input type="text" name="fullname" placeholder="Full Name" required>
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <select name="role" required>
+            <option value="admin">Admin</option>
+            <option value="user" selected>User</option>
+        </select>
+        <select name="jabatan" required>
+            <option value="Manager">Manager</option>
+            <option value="Supervisor">Supervisor</option>
+            <option value="Staff" selected>Staff</option>
+        </select>
+        <input type="date" name="tanggal_masuk" required>
+        <select name="status" required>
+            <option value="aktif" selected>Aktif</option>
+            <option value="tidak_aktif">Tidak Aktif</option>
+        </select>
+        <input type="file" name="foto" accept="image/*">
+        <button type="submit">Create</button>
+    </form>
+</body>
+</html>

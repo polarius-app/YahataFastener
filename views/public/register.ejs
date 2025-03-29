@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<body>
+    <h2>Register</h2>
+
+    <% if (error) { %>
+        <p style="color:red;"><%= error %></p>
+    <% } %>
+
+    <form action="/register" method="POST" enctype="multipart/form-data">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="text" name="fullname" placeholder="Full Name" required>
+
+        <select name="jabatan" required>
+            <option value="Manager">Manager</option>
+            <option value="Supervisor">Supervisor</option>
+            <option value="Staff" selected>Staff</option>
+        </select>
+
+        <label for="tanggal_masuk">Tanggal Masuk:</label>
+        <input type="date" name="tanggal_masuk" required>
+
+        <label for="foto">Upload Foto:</label>
+        <input type="file" name="foto" accept="image/*">
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="/login">Login here</a></p>
+</body>
+</html>

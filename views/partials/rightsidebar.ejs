@@ -1,0 +1,30 @@
+<aside class="bg-white text-gray-800 h-full">
+  <!-- Container luar (box) -->
+  <div class="rounded-lg h-full">
+    <!-- Container dalam dengan padding -->
+    <div class=" p-10">
+      <div class="flex items-center">
+        <% if (user.foto) { %>
+          <img src="data:image/jpeg;base64,<%= user.foto.toString('base64') %>" 
+               alt="User Photo" 
+               class="w-10 h-10 rounded-full object-cover">
+        <% } else { %>
+          <img src="https://via.placeholder.com/64" 
+               alt="Default Photo" 
+               class="w-10 h-10 rounded-full object-cover">
+        <% } %>
+        <div class="ml-3">
+          <% 
+            let nameParts = user.fullname.split(' ');
+            let displayName = nameParts[0];
+            if(nameParts.length > 1) {
+              displayName += " " + nameParts[1].charAt(0).toUpperCase() + ".";
+            }
+          %>
+          <p class="font-regular text-sm text-gray-800"><%= displayName %></p>
+          <p class="text-xs font-regular text-gray-400"><%= user.jabatan %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1><%= title %></h1>
+
+  <a href="/pengaduan/form">+ Tambah Pengaduan</a>
+  <table cellspacing="0" cellpadding="5">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nama</th>
+        <th>Departemen</th>
+        <th>Kategori</th>
+        <th>Tanggal Kejadian</th>
+        <th>Waktu Kejadian</th>
+        <th>Kendala Masalah</th>
+        <th>Tanggal Perbaikan</th>
+        <th>Waktu Perbaikan</th>
+        <th>Perbaikan</th>
+        <th>Status</th>
+        <th>Keterangan</th>
+        <th>Periode</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% daftar.forEach((item) => { %>
+      <tr>
+        <td><%= item.id_daftar_masalah %></td>
+        <td><%= item.nama %></td>
+        <td><%= item.departemen %></td>
+        <td><%= item.kategori ? item.kategori.nama_kategori : '-' %></td>
+        <td><%= item.tanggal_kejadian %></td>
+        <td><%= item.waktu_kejadian %></td>
+        <td><%= item.kendala_masalah %></td>
+        <td><%= item.tanggal_perbaikan ? item.tanggal_perbaikan : '-' %></td>
+        <td><%= item.waktu_perbaikan ? item.waktu_perbaikan : '-' %></td>
+        <td><%= item.perbaikan ? item.perbaikan : '-' %></td>
+        <td><%= item.status %></td>
+        <td><%= item.keterangan ? item.keterangan : '-' %></td>
+        <td>
+          <%= item.periode ? (item.periode.tahun_periode + " - " + item.periode.isp_periode) : '-' %>
+        </td>
+        <td>
+          <a href="/pengaduan/edit/<%= item.id_daftar_masalah %>">Edit</a> |
+          <% if (item.status === 'open') { %>
+            <a href="/pengaduan/hapus/<%= item.id_daftar_masalah %>" onclick="return confirm('Anda yakin ingin menghapus pengaduan ini?');">Hapus</a>
+          <% } else { %>
+            (Tidak bisa dihapus)
+          <% } %>
+        </td>        
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <a href="/admin/dashboard">Kembali ke Dashboard</a>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Pengaduan</title>
+  <style>
+    label { display: block; margin-top: 10px; }
+    input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; }
+    button { margin-top: 15px; padding: 8px 12px; }
+  </style>
+  <script>
+    async function tambahKategori() {
+      let namaKategori = document.getElementById("kategoriBaru").value.trim();
+      if (!namaKategori) return alert("Nama kategori tidak boleh kosong!");
+      try {
+        let response = await fetch('/pengaduan/kategori/tambah', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nama_kategori: namaKategori })
+        });
+        let result = await response.json();
+        if (result.success) {
+          let select = document.getElementById("kategoriSelect");
+          let option = document.createElement("option");
+          option.value = result.id;
+          option.textContent = namaKategori;
+          // Sisipkan opsi sebelum opsi "tambah"
+          select.insertBefore(option, select.lastElementChild);
+          select.value = result.id;
+          document.getElementById("kategoriBaruContainer").style.display = "none";
+          document.getElementById("kategoriBaru").value = "";
+        } else {
+          alert("Gagal menambah kategori: " + result.message);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan saat menambah kategori.");
+      }
+    }
+
+    async function tambahPeriode() {
+      let tahun = document.getElementById("tahunPeriodeBaru").value;
+      let isp = document.getElementById("ispPeriodeBaru").value;
+      if (!tahun || !isp) return alert("Tahun dan ISP harus diisi!");
+      try {
+        let response = await fetch('/pengaduan/periode/tambah', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tahun_periode: tahun, isp_periode: isp })
+        });
+        let result = await response.json();
+        if (result.success) {
+          let select = document.getElementById("periodeSelect");
+          let option = document.createElement("option");
+          option.value = result.id;
+          option.textContent = tahun + " - " + isp;
+          select.insertBefore(option, select.lastElementChild);
+          select.value = result.id;
+          document.getElementById("periodeBaruContainer").style.display = "none";
+          document.getElementById("tahunPeriodeBaru").value = "";
+          document.getElementById("ispPeriodeBaru").value = "";
+        } else {
+          alert("Gagal menambah periode!");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan saat menambah periode.");
+      }
+    }
+
+    function checkKategori() {
+      let kategoriSelect = document.getElementById("kategoriSelect");
+      let kategoriBaruContainer = document.getElementById("kategoriBaruContainer");
+      kategoriBaruContainer.style.display = kategoriSelect.value === "tambah" ? "block" : "none";
+    }
+
+    function checkPeriode() {
+      let periodeSelect = document.getElementById("periodeSelect");
+      let periodeBaruContainer = document.getElementById("periodeBaruContainer");
+      periodeBaruContainer.style.display = periodeSelect.value === "tambah" ? "block" : "none";
+    }
+  </script>
+</head>
+<body>
+  <h1>Edit Pengaduan</h1>
+
+  <% if (error) { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+  <form action="/pengaduan/edit/<%= pengaduan.id_daftar_masalah %>" method="POST">
+    <label>Nama:</label>
+    <input type="text" name="nama" value="<%= pengaduan.nama %>" required>
+
+    <label>Departemen:</label>
+    <select name="departemen" required>
+      <option value="HDGA" <%= pengaduan.departemen === 'HDGA' ? 'selected' : '' %>>HDGA</option>
+      <option value="STAFF" <%= pengaduan.departemen === 'STAFF' ? 'selected' : '' %>>STAFF</option>
+      <option value="MARKETING" <%= pengaduan.departemen === 'MARKETING' ? 'selected' : '' %>>MARKETING</option>
+      <option value="QUALITY" <%= pengaduan.departemen === 'QUALITY' ? 'selected' : '' %>>QUALITY</option>
+      <option value="ACCOUNTING" <%= pengaduan.departemen === 'ACCOUNTING' ? 'selected' : '' %>>ACCOUNTING</option>
+      <option value="SALES" <%= pengaduan.departemen === 'SALES' ? 'selected' : '' %>>SALES</option>
+      <option value="PURCHASE" <%= pengaduan.departemen === 'PURCHASE' ? 'selected' : '' %>>PURCHASE</option>
+      <option value="QC" <%= pengaduan.departemen === 'QC' ? 'selected' : '' %>>QC</option>
+      <option value="PPIC" <%= pengaduan.departemen === 'PPIC' ? 'selected' : '' %>>PPIC</option>
+      <option value="ADVISOR" <%= pengaduan.departemen === 'ADVISOR' ? 'selected' : '' %>>ADVISOR</option>
+      <option value="DIRECTOR" <%= pengaduan.departemen === 'DIRECTOR' ? 'selected' : '' %>>DIRECTOR</option>
+      <option value="PRCL" <%= pengaduan.departemen === 'PRCL' ? 'selected' : '' %>>PRCL</option>
+    </select>
+
+    <label>Tanggal Kejadian:</label>
+    <input type="date" name="tanggal_kejadian" value="<%= pengaduan.tanggal_kejadian %>" required>
+
+    <label>Waktu Kejadian:</label>
+    <input type="time" name="waktu_kejadian" value="<%= pengaduan.waktu_kejadian %>" required>
+
+    <label>Kendala Masalah:</label>
+    <textarea name="kendala_masalah" required><%= pengaduan.kendala_masalah %></textarea>
+
+    <!-- Dropdown Kategori -->
+    <label>Kategori:</label>
+    <select name="id_kategori_masalah" id="kategoriSelect" onchange="checkKategori()">
+      <option value="">--Pilih Kategori--</option>
+      <% kategoriList.forEach((kat) => { %>
+        <option value="<%= kat.id_kategori_masalah %>" <%= (pengaduan.kategori && pengaduan.kategori.id_kategori_masalah == kat.id_kategori_masalah) ? 'selected' : '' %>><%= kat.nama_kategori %></option>
+      <% }) %>
+      <option value="tambah">+ Tambah Kategori</option>
+    </select>
+
+    <!-- Input Tambah Kategori -->
+    <div id="kategoriBaruContainer" style="display: none;">
+      <input type="text" id="kategoriBaru" placeholder="Nama Kategori Baru">
+      <button type="button" onclick="tambahKategori()">✅</button>
+    </div>
+
+    <!-- Dropdown Periode -->
+    <label>Periode:</label>
+    <select name="id_periode" id="periodeSelect" onchange="checkPeriode()">
+      <option value="">--Pilih Periode--</option>
+      <% periodeList.forEach((per) => { %>
+        <option value="<%= per.id_periode %>" <%= (pengaduan.periode && pengaduan.periode.id_periode == per.id_periode) ? 'selected' : '' %>><%= per.tahun_periode %> - <%= per.isp_periode %></option>
+      <% }) %>
+      <option value="tambah">+ Tambah Periode</option>
+    </select>
+
+    <!-- Input Tambah Periode -->
+    <div id="periodeBaruContainer" style="display: none;">
+      <input type="text" id="tahunPeriodeBaru" placeholder="Tahun Periode">
+      <input type="text" id="ispPeriodeBaru" placeholder="ISP Periode">
+      <button type="button" onclick="tambahPeriode()">✅</button>
+    </div>
+
+    <!-- Field untuk admin saja: tidak ditampilkan untuk user biasa -->
+    <% if (user && user.role === 'admin') { %>
+      <label>Tanggal Perbaikan:</label>
+      <input type="date" name="tanggal_perbaikan" value="<%= pengaduan.tanggal_perbaikan || '' %>">
+      
+      <label>Waktu Perbaikan:</label>
+      <input type="time" name="waktu_perbaikan" value="<%= pengaduan.waktu_perbaikan || '' %>">
+      
+      <label>Perbaikan:</label>
+      <textarea name="perbaikan" placeholder="Keterangan perbaikan (jika ada)"><%= pengaduan.perbaikan || '' %></textarea>
+      
+      <label>Status:</label>
+      <select name="status">
+        <option value="open" <%= pengaduan.status === 'open' ? 'selected' : '' %>>Open</option>
+        <option value="close" <%= pengaduan.status === 'close' ? 'selected' : '' %>>Close</option>
+      </select>
+      
+      <label>Keterangan:</label>
+      <textarea name="keterangan" placeholder="Keterangan tambahan (opsional)"><%= pengaduan.keterangan || '' %></textarea>
+    <% } %>
+
+    <button type="submit">Update Pengaduan</button>
+  </form>
+  <a href="/pengaduan/daftar">Kembali ke Daftar Pengaduan</a>
+</body>
+</html>

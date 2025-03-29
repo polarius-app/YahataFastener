@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <script>
+    async function tambahKategori() {
+      let namaKategori = document.getElementById("kategoriBaru").value.trim(); // Ambil nilai input dan hapus spasi
+      if (!namaKategori) return alert("Nama kategori tidak boleh kosong!");
+
+      try {
+        console.log("Mengirim data:", { nama_kategori: namaKategori }); // Log data yang dikirim
+        let response = await fetch('/pengaduan/kategori/tambah', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nama_kategori: namaKategori })
+        });
+
+        let result = await response.json();
+        console.log("Respons server:", result); // Log respons dari server
+
+        if (result.success) {
+          let select = document.getElementById("kategoriSelect");
+          let option = document.createElement("option");
+          option.value = result.id;
+          option.textContent = namaKategori;
+          select.insertBefore(option, select.lastElementChild);
+          select.value = result.id;
+          document.getElementById("kategoriBaruContainer").style.display = "none";
+          document.getElementById("kategoriBaru").value = "";
+        } else {
+          alert("Gagal menambah kategori: " + result.message);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan saat menambah kategori.");
+      }
+    }
+
+    async function tambahPeriode() {
+      let tahun = document.getElementById("tahunPeriodeBaru").value;
+      let isp = document.getElementById("ispPeriodeBaru").value;
+      if (!tahun || !isp) return alert("Tahun dan ISP harus diisi!");
+
+      let response = await fetch('/pengaduan/periode/tambah', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tahun_periode: tahun, isp_periode: isp })
+      });
+
+      let result = await response.json();
+      if (result.success) {
+        let select = document.getElementById("periodeSelect");
+        let option = document.createElement("option");
+        option.value = result.id;
+        option.textContent = tahun + " - " + isp;
+        select.insertBefore(option, select.lastElementChild);
+        select.value = result.id;
+        document.getElementById("periodeBaruContainer").style.display = "none";
+        document.getElementById("tahunPeriodeBaru").value = "";
+        document.getElementById("ispPeriodeBaru").value = "";
+      } else {
+        alert("Gagal menambah periode!");
+      }
+    }
+
+    function checkKategori() {
+      let kategoriSelect = document.getElementById("kategoriSelect");
+      let kategoriBaruContainer = document.getElementById("kategoriBaruContainer");
+      kategoriBaruContainer.style.display = kategoriSelect.value === "tambah" ? "block" : "none";
+    }
+
+    function checkPeriode() {
+      let periodeSelect = document.getElementById("periodeSelect");
+      let periodeBaruContainer = document.getElementById("periodeBaruContainer");
+      periodeBaruContainer.style.display = periodeSelect.value === "tambah" ? "block" : "none";
+    }
+  </script>
+</head>
+<body>
+  <h1><%= title %></h1>
+
+  <% if (error) { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+  <form action="/pengaduan/form" method="POST">
+    <label>Nama:</label>
+    <input type="text" name="nama" required>
+
+    <!-- Dropdown Departemen sesuai ENUM -->
+    <label>Departemen:</label>
+    <select name="departemen" required>
+      <option value="HDGA">HDGA</option>
+      <option value="STAFF" selected>STAFF</option>
+      <option value="MARKETING">MARKETING</option>
+      <option value="QUALITY">QUALITY</option>
+      <option value="ACCOUNTING">ACCOUNTING</option>
+      <option value="SALES">SALES</option>
+      <option value="PURCHASE">PURCHASE</option>
+      <option value="QC">QC</option>
+      <option value="PPIC">PPIC</option>
+      <option value="ADVISOR">ADVISOR</option>
+      <option value="DIRECTOR">DIRECTOR</option>
+      <option value="PRCL">PRCL</option>
+    </select>
+
+    <label>Tanggal Kejadian:</label>
+    <input type="date" name="tanggal_kejadian" required>
+
+    <label>Waktu Kejadian:</label>
+    <input type="time" name="waktu_kejadian" required>
+
+    <label>Kendala Masalah:</label>
+    <textarea name="kendala_masalah" required></textarea>
+
+    <!-- Dropdown Kategori -->
+    <!-- Contoh bagian form untuk kategori -->
+    <label>Kategori:</label>
+    <select name="id_kategori_masalah" id="kategoriSelect" onchange="checkKategori()">
+      <option value="">--Pilih Kategori--</option>
+      <% kategoriList.forEach((kat) => { %>
+        <option value="<%= kat.id_kategori_masalah %>"><%= kat.nama_kategori %></option>
+      <% }) %>
+      <option value="tambah">+ Tambah Kategori</option>
+    </select>
+
+
+
+    <!-- Input Tambah Kategori -->
+    <div id="kategoriBaruContainer" style="display: none;">
+      <input type="text" id="kategoriBaru" placeholder="Nama Kategori Baru">
+      <button type="button" onclick="tambahKategori()">✅</button>
+    </div>
+
+    <!-- Dropdown Periode -->
+    <label>Periode:</label>
+    <select name="id_periode" id="periodeSelect" onchange="checkPeriode()">
+      <option value="">--Pilih Periode--</option>
+      <% periodeList.forEach((per) => { %>
+        <option value="<%= per.id_periode %>"><%= per.tahun_periode %> - <%= per.isp_periode %></option>
+      <% }) %>
+      <option value="tambah">+ Tambah Periode</option>
+    </select>
+
+    <!-- Input Tambah Periode -->
+    <div id="periodeBaruContainer" style="display: none;">
+      <input type="text" id="tahunPeriodeBaru" placeholder="Tahun Periode">
+      <input type="text" id="ispPeriodeBaru" placeholder="ISP Periode">
+      <button type="button" onclick="tambahPeriode()">✅</button>
+    </div>
+
+    <!-- Field-field berikut tidak ditampilkan karena default di database (hanya admin yang mengubah) -->
+    <!-- tanggal_perbaikan, waktu_perbaikan, perbaikan, status (default open) dan keterangan tidak disertakan -->
+
+    <button type="submit">Simpan Pengaduan</button>
+  </form>
+</body>
+</html>

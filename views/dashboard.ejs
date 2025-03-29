@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <!-- Layout grid dengan custom template kolom: sidebar (1.5fr), konten utama (8fr), sidebar (1.5fr) -->
+  <div class="grid grid-cols-[1.5fr_8fr_1.5fr] min-h-screen">
+    <!-- Sidebar Kiri -->
+    <div class="leftsidebar pr-2">
+      <%- include('../partials/leftsidebar') %>
+    </div>
+
+    <!-- Konten Utama -->
+    <main class="content p-10">
+      <div class="flex items-center mb-6">
+        <% if (user.foto) { %>
+          <img src="data:image/jpeg;base64,<%= user.foto.toString('base64') %>" 
+               alt="Profile Photo" 
+               class="w-20 h-20 rounded-full object-cover border-2 border-gray-800 mr-4">
+        <% } else { %>
+          <img src="https://via.placeholder.com/80" 
+               alt="Default Profile" 
+               class="w-20 h-20 rounded-full object-cover border-2 border-gray-800 mr-4">
+        <% } %>
+        <h2 class="text-2xl font-semibold">Welcome, <%= user.fullname %>!</h2>
+      </div>
+      <p>This is your dashboard.</p>
+      <a href="/logout" class="text-blue-500 hover:underline">Logout</a>
+    </main>
+
+    <!-- Sidebar Kanan -->
+    <div class="rightsidebar pl-2">
+      <%- include('../partials/rightsidebar') %>
+    </div>
+  </div>
+</body>
+</html>
