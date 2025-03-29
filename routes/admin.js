@@ -20,5 +20,6 @@ router.post('/admin/users/create', upload.single('foto'), adminController.create
 router.get('/admin/users/edit/:id', adminController.showEditUserForm);
 router.post('/admin/users/edit/:id', upload.single('foto'), adminController.editUser);
 router.post('/admin/users/delete/:id', adminController.deleteUser);
+router.post('/admin/toggle-status/:id', adminController.toggleUserStatus);
 
 module.exports = router;

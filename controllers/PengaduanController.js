@@ -6,11 +6,14 @@ exports.formPengaduan = async (req, res) => {
     const kategoriList = await KategoriMasalah.findAll();
     // Ambil data periode untuk dropdown (opsional)
     const periodeList = await Periode.findAll();
+    const tb_daftar_masalah = await DaftarMasalah.findByPk(req.params.id); // Sesuaikan dengan kebutuhan
 
     res.render('pengaduan/pengaduan_form', {
       title: 'Form Pengaduan Masalah',
       kategoriList,
       periodeList,
+      tb_daftar_masalah, // Kirim data daftar masalah jika diperlukan
+      user: req.session.user, // Kirim data user ke view jika diperlukan
       error: null
     });
   } catch (error) {
@@ -73,7 +76,8 @@ exports.daftarPengaduan = async (req, res) => {
 
     res.render('pengaduan/pengaduan_daftar', {
       title: 'Daftar Pengaduan Masalah',
-      daftar
+      daftar,
+      user: req.session.user, // Kirim data user ke view jika diperlukan
     });
   } catch (error) {
     console.error(error);

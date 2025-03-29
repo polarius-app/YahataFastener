@@ -2,12 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Pengaduan</title>
-  <style>
-    label { display: block; margin-top: 10px; }
-    input, select, textarea { width: 100%; padding: 6px; margin-top: 4px; }
-    button { margin-top: 15px; padding: 8px 12px; }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     async function tambahKategori() {
       let namaKategori = document.getElementById("kategoriBaru").value.trim();
@@ -27,7 +24,7 @@
           // Sisipkan opsi sebelum opsi "tambah"
           select.insertBefore(option, select.lastElementChild);
           select.value = result.id;
-          document.getElementById("kategoriBaruContainer").style.display = "none";
+          document.getElementById("kategoriBaruContainer").classList.add("hidden");
           document.getElementById("kategoriBaru").value = "";
         } else {
           alert("Gagal menambah kategori: " + result.message);
@@ -56,7 +53,7 @@
           option.textContent = tahun + " - " + isp;
           select.insertBefore(option, select.lastElementChild);
           select.value = result.id;
-          document.getElementById("periodeBaruContainer").style.display = "none";
+          document.getElementById("periodeBaruContainer").classList.add("hidden");
           document.getElementById("tahunPeriodeBaru").value = "";
           document.getElementById("ispPeriodeBaru").value = "";
         } else {
@@ -81,98 +78,148 @@
     }
   </script>
 </head>
-<body>
-  <h1>Edit Pengaduan</h1>
-
-  <% if (error) { %>
-    <p style="color:red;"><%= error %></p>
-  <% } %>
-
-  <form action="/pengaduan/edit/<%= pengaduan.id_daftar_masalah %>" method="POST">
-    <label>Nama:</label>
-    <input type="text" name="nama" value="<%= pengaduan.nama %>" required>
-
-    <label>Departemen:</label>
-    <select name="departemen" required>
-      <option value="HDGA" <%= pengaduan.departemen === 'HDGA' ? 'selected' : '' %>>HDGA</option>
-      <option value="STAFF" <%= pengaduan.departemen === 'STAFF' ? 'selected' : '' %>>STAFF</option>
-      <option value="MARKETING" <%= pengaduan.departemen === 'MARKETING' ? 'selected' : '' %>>MARKETING</option>
-      <option value="QUALITY" <%= pengaduan.departemen === 'QUALITY' ? 'selected' : '' %>>QUALITY</option>
-      <option value="ACCOUNTING" <%= pengaduan.departemen === 'ACCOUNTING' ? 'selected' : '' %>>ACCOUNTING</option>
-      <option value="SALES" <%= pengaduan.departemen === 'SALES' ? 'selected' : '' %>>SALES</option>
-      <option value="PURCHASE" <%= pengaduan.departemen === 'PURCHASE' ? 'selected' : '' %>>PURCHASE</option>
-      <option value="QC" <%= pengaduan.departemen === 'QC' ? 'selected' : '' %>>QC</option>
-      <option value="PPIC" <%= pengaduan.departemen === 'PPIC' ? 'selected' : '' %>>PPIC</option>
-      <option value="ADVISOR" <%= pengaduan.departemen === 'ADVISOR' ? 'selected' : '' %>>ADVISOR</option>
-      <option value="DIRECTOR" <%= pengaduan.departemen === 'DIRECTOR' ? 'selected' : '' %>>DIRECTOR</option>
-      <option value="PRCL" <%= pengaduan.departemen === 'PRCL' ? 'selected' : '' %>>PRCL</option>
-    </select>
-
-    <label>Tanggal Kejadian:</label>
-    <input type="date" name="tanggal_kejadian" value="<%= pengaduan.tanggal_kejadian %>" required>
-
-    <label>Waktu Kejadian:</label>
-    <input type="time" name="waktu_kejadian" value="<%= pengaduan.waktu_kejadian %>" required>
-
-    <label>Kendala Masalah:</label>
-    <textarea name="kendala_masalah" required><%= pengaduan.kendala_masalah %></textarea>
-
-    <!-- Dropdown Kategori -->
-    <label>Kategori:</label>
-    <select name="id_kategori_masalah" id="kategoriSelect" onchange="checkKategori()">
-      <option value="">--Pilih Kategori--</option>
-      <% kategoriList.forEach((kat) => { %>
-        <option value="<%= kat.id_kategori_masalah %>" <%= (pengaduan.kategori && pengaduan.kategori.id_kategori_masalah == kat.id_kategori_masalah) ? 'selected' : '' %>><%= kat.nama_kategori %></option>
-      <% }) %>
-      <option value="tambah">+ Tambah Kategori</option>
-    </select>
-
-    <!-- Input Tambah Kategori -->
-    <div id="kategoriBaruContainer" style="display: none;">
-      <input type="text" id="kategoriBaru" placeholder="Nama Kategori Baru">
-      <button type="button" onclick="tambahKategori()">✅</button>
+<body class="bg-gray-100">
+  <!-- Layout grid: left sidebar, konten utama, right sidebar -->
+  <div class="grid grid-cols-[1.5fr_8fr_1.5fr] min-h-screen">
+    <!-- Left Sidebar -->
+    <div class="leftsidebar pr-2">
+      <%- include('../partials/leftsidebar') %>
     </div>
 
-    <!-- Dropdown Periode -->
-    <label>Periode:</label>
-    <select name="id_periode" id="periodeSelect" onchange="checkPeriode()">
-      <option value="">--Pilih Periode--</option>
-      <% periodeList.forEach((per) => { %>
-        <option value="<%= per.id_periode %>" <%= (pengaduan.periode && pengaduan.periode.id_periode == per.id_periode) ? 'selected' : '' %>><%= per.tahun_periode %> - <%= per.isp_periode %></option>
-      <% }) %>
-      <option value="tambah">+ Tambah Periode</option>
-    </select>
+    <!-- Konten Utama -->
+    <main class="p-10 bg-white rounded-lg shadow mx-4 my-4">
+      <nav class="text-sm text-gray-400 mb-2">
+        <a href="/admin/dashboard" class="text-gray-500 hover:text-gray-700">Dashboard</a> /
+        <a href="/pengaduan/daftar" class="text-gray-500 hover:text-gray-700">Pengaduan</a> /
+        <a href="/pengaduan/edit/<%= pengaduan.id_daftar_masalah %>" class="text-gray-800 font-semibold">Edit</a>
+       </nav>
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Pengaduan</h1>
 
-    <!-- Input Tambah Periode -->
-    <div id="periodeBaruContainer" style="display: none;">
-      <input type="text" id="tahunPeriodeBaru" placeholder="Tahun Periode">
-      <input type="text" id="ispPeriodeBaru" placeholder="ISP Periode">
-      <button type="button" onclick="tambahPeriode()">✅</button>
+      <% if (error) { %>
+        <p class="text-red-500 mb-4"><%= error %></p>
+      <% } %>
+
+      <form action="/pengaduan/edit/<%= pengaduan.id_daftar_masalah %>" method="POST" class="space-y-4">
+        <!-- Nama -->
+        <div>
+          <label class="block text-gray-700">Nama:</label>
+          <input type="text" name="nama" value="<%= pengaduan.nama %>" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Departemen -->
+        <div>
+          <label class="block text-gray-700">Departemen:</label>
+          <select name="departemen" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="HDGA" <%= pengaduan.departemen === 'HDGA' ? 'selected' : '' %>>HDGA</option>
+            <option value="STAFF" <%= pengaduan.departemen === 'STAFF' ? 'selected' : '' %>>STAFF</option>
+            <option value="MARKETING" <%= pengaduan.departemen === 'MARKETING' ? 'selected' : '' %>>MARKETING</option>
+            <option value="QUALITY" <%= pengaduan.departemen === 'QUALITY' ? 'selected' : '' %>>QUALITY</option>
+            <option value="ACCOUNTING" <%= pengaduan.departemen === 'ACCOUNTING' ? 'selected' : '' %>>ACCOUNTING</option>
+            <option value="SALES" <%= pengaduan.departemen === 'SALES' ? 'selected' : '' %>>SALES</option>
+            <option value="PURCHASE" <%= pengaduan.departemen === 'PURCHASE' ? 'selected' : '' %>>PURCHASE</option>
+            <option value="QC" <%= pengaduan.departemen === 'QC' ? 'selected' : '' %>>QC</option>
+            <option value="PPIC" <%= pengaduan.departemen === 'PPIC' ? 'selected' : '' %>>PPIC</option>
+            <option value="ADVISOR" <%= pengaduan.departemen === 'ADVISOR' ? 'selected' : '' %>>ADVISOR</option>
+            <option value="DIRECTOR" <%= pengaduan.departemen === 'DIRECTOR' ? 'selected' : '' %>>DIRECTOR</option>
+            <option value="PRCL" <%= pengaduan.departemen === 'PRCL' ? 'selected' : '' %>>PRCL</option>
+          </select>
+        </div>
+
+        <!-- Tanggal Kejadian -->
+        <div>
+          <label class="block text-gray-700">Tanggal Kejadian:</label>
+          <input type="date" name="tanggal_kejadian" value="<%= pengaduan.tanggal_kejadian %>" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Waktu Kejadian -->
+        <div>
+          <label class="block text-gray-700">Waktu Kejadian:</label>
+          <input type="time" name="waktu_kejadian" value="<%= pengaduan.waktu_kejadian %>" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Kendala Masalah -->
+        <div>
+          <label class="block text-gray-700">Kendala Masalah:</label>
+          <textarea name="kendala_masalah" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"><%= pengaduan.kendala_masalah %></textarea>
+        </div>
+
+        <!-- Dropdown Kategori -->
+        <div>
+          <label class="block text-gray-700">Kategori:</label>
+          <select name="id_kategori_masalah" id="kategoriSelect" onchange="checkKategori()" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">--Pilih Kategori--</option>
+            <% kategoriList.forEach((kat) => { %>
+              <option value="<%= kat.id_kategori_masalah %>" <%= (pengaduan.kategori && pengaduan.kategori.id_kategori_masalah == kat.id_kategori_masalah) ? 'selected' : '' %>><%= kat.nama_kategori %></option>
+            <% }) %>
+            <option value="tambah">+ Tambah Kategori</option>
+          </select>
+        </div>
+
+        <!-- Input Tambah Kategori -->
+        <div id="kategoriBaruContainer" class="hidden">
+          <input type="text" id="kategoriBaru" placeholder="Nama Kategori Baru" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2">
+          <button type="button" onclick="tambahKategori()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">✅</button>
+        </div>
+
+        <!-- Dropdown Periode -->
+        <div>
+          <label class="block text-gray-700">Periode:</label>
+          <select name="id_periode" id="periodeSelect" onchange="checkPeriode()" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">--Pilih Periode--</option>
+            <% periodeList.forEach((per) => { %>
+              <option value="<%= per.id_periode %>" <%= (pengaduan.periode && pengaduan.periode.id_periode == per.id_periode) ? 'selected' : '' %>><%= per.tahun_periode %> - <%= per.isp_periode %></option>
+            <% }) %>
+            <option value="tambah">+ Tambah Periode</option>
+          </select>
+        </div>
+
+        <!-- Input Tambah Periode -->
+        <div id="periodeBaruContainer" class="hidden">
+          <input type="text" id="tahunPeriodeBaru" placeholder="Tahun Periode" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2">
+          <input type="text" id="ispPeriodeBaru" placeholder="ISP Periode" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2">
+          <button type="button" onclick="tambahPeriode()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">✅</button>
+        </div>
+
+        <!-- Field tambahan untuk admin -->
+        <% if (user && user.role === 'admin') { %>
+          <div>
+            <label class="block text-gray-700">Tanggal Perbaikan:</label>
+            <input type="date" name="tanggal_perbaikan" value="<%= pengaduan.tanggal_perbaikan || '' %>" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-gray-700">Waktu Perbaikan:</label>
+            <input type="time" name="waktu_perbaikan" value="<%= pengaduan.waktu_perbaikan || '' %>" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-gray-700">Perbaikan:</label>
+            <textarea name="perbaikan" placeholder="Keterangan perbaikan (jika ada)" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"><%= pengaduan.perbaikan || '' %></textarea>
+          </div>
+
+          <div>
+            <label class="block text-gray-700">Status:</label>
+            <select name="status" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="open" <%= pengaduan.status === 'open' ? 'selected' : '' %>>Open</option>
+              <option value="close" <%= pengaduan.status === 'close' ? 'selected' : '' %>>Close</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-gray-700">Keterangan:</label>
+            <textarea name="keterangan" placeholder="Keterangan tambahan (opsional)" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"><%= pengaduan.keterangan || '' %></textarea>
+          </div>
+        <% } %>
+
+        <button type="submit" class="w-full px-4 py-2 bg-green-500 text-white rounded-lg">Update Pengaduan</button>
+      </form>
+      <a href="/pengaduan/daftar" class="inline-block mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Kembali ke Daftar Pengaduan</a>
+    </main>
+
+    <!-- Right Sidebar -->
+    <div class="rightsidebar pl-2">
+      <%- include('../partials/rightsidebar') %>
     </div>
-
-    <!-- Field untuk admin saja: tidak ditampilkan untuk user biasa -->
-    <% if (user && user.role === 'admin') { %>
-      <label>Tanggal Perbaikan:</label>
-      <input type="date" name="tanggal_perbaikan" value="<%= pengaduan.tanggal_perbaikan || '' %>">
-      
-      <label>Waktu Perbaikan:</label>
-      <input type="time" name="waktu_perbaikan" value="<%= pengaduan.waktu_perbaikan || '' %>">
-      
-      <label>Perbaikan:</label>
-      <textarea name="perbaikan" placeholder="Keterangan perbaikan (jika ada)"><%= pengaduan.perbaikan || '' %></textarea>
-      
-      <label>Status:</label>
-      <select name="status">
-        <option value="open" <%= pengaduan.status === 'open' ? 'selected' : '' %>>Open</option>
-        <option value="close" <%= pengaduan.status === 'close' ? 'selected' : '' %>>Close</option>
-      </select>
-      
-      <label>Keterangan:</label>
-      <textarea name="keterangan" placeholder="Keterangan tambahan (opsional)"><%= pengaduan.keterangan || '' %></textarea>
-    <% } %>
-
-    <button type="submit">Update Pengaduan</button>
-  </form>
-  <a href="/pengaduan/daftar">Kembali ke Daftar Pengaduan</a>
+  </div>
 </body>
 </html>

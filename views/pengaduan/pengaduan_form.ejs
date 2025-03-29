@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     async function tambahKategori() {
       let namaKategori = document.getElementById("kategoriBaru").value.trim(); // Ambil nilai input dan hapus spasi
       if (!namaKategori) return alert("Nama kategori tidak boleh kosong!");
 
       try {
-        console.log("Mengirim data:", { nama_kategori: namaKategori }); // Log data yang dikirim
+        console.log("Mengirim data:", { nama_kategori: namaKategori });
         let response = await fetch('/pengaduan/kategori/tambah', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -17,7 +19,7 @@
         });
 
         let result = await response.json();
-        console.log("Respons server:", result); // Log respons dari server
+        console.log("Respons server:", result);
 
         if (result.success) {
           let select = document.getElementById("kategoriSelect");
@@ -26,7 +28,7 @@
           option.textContent = namaKategori;
           select.insertBefore(option, select.lastElementChild);
           select.value = result.id;
-          document.getElementById("kategoriBaruContainer").style.display = "none";
+          document.getElementById("kategoriBaruContainer").classList.add("hidden");
           document.getElementById("kategoriBaru").value = "";
         } else {
           alert("Gagal menambah kategori: " + result.message);
@@ -56,7 +58,7 @@
         option.textContent = tahun + " - " + isp;
         select.insertBefore(option, select.lastElementChild);
         select.value = result.id;
-        document.getElementById("periodeBaruContainer").style.display = "none";
+        document.getElementById("periodeBaruContainer").classList.add("hidden");
         document.getElementById("tahunPeriodeBaru").value = "";
         document.getElementById("ispPeriodeBaru").value = "";
       } else {
@@ -67,93 +69,135 @@
     function checkKategori() {
       let kategoriSelect = document.getElementById("kategoriSelect");
       let kategoriBaruContainer = document.getElementById("kategoriBaruContainer");
-      kategoriBaruContainer.style.display = kategoriSelect.value === "tambah" ? "block" : "none";
+      if (kategoriSelect.value === "tambah") {
+        kategoriBaruContainer.classList.remove("hidden");
+      } else {
+        kategoriBaruContainer.classList.add("hidden");
+      }
     }
 
     function checkPeriode() {
       let periodeSelect = document.getElementById("periodeSelect");
       let periodeBaruContainer = document.getElementById("periodeBaruContainer");
-      periodeBaruContainer.style.display = periodeSelect.value === "tambah" ? "block" : "none";
+      if (periodeSelect.value === "tambah") {
+        periodeBaruContainer.classList.remove("hidden");
+      } else {
+        periodeBaruContainer.classList.add("hidden");
+      }
     }
   </script>
 </head>
-<body>
-  <h1><%= title %></h1>
-
-  <% if (error) { %>
-    <p style="color:red;"><%= error %></p>
-  <% } %>
-
-  <form action="/pengaduan/form" method="POST">
-    <label>Nama:</label>
-    <input type="text" name="nama" required>
-
-    <!-- Dropdown Departemen sesuai ENUM -->
-    <label>Departemen:</label>
-    <select name="departemen" required>
-      <option value="HDGA">HDGA</option>
-      <option value="STAFF" selected>STAFF</option>
-      <option value="MARKETING">MARKETING</option>
-      <option value="QUALITY">QUALITY</option>
-      <option value="ACCOUNTING">ACCOUNTING</option>
-      <option value="SALES">SALES</option>
-      <option value="PURCHASE">PURCHASE</option>
-      <option value="QC">QC</option>
-      <option value="PPIC">PPIC</option>
-      <option value="ADVISOR">ADVISOR</option>
-      <option value="DIRECTOR">DIRECTOR</option>
-      <option value="PRCL">PRCL</option>
-    </select>
-
-    <label>Tanggal Kejadian:</label>
-    <input type="date" name="tanggal_kejadian" required>
-
-    <label>Waktu Kejadian:</label>
-    <input type="time" name="waktu_kejadian" required>
-
-    <label>Kendala Masalah:</label>
-    <textarea name="kendala_masalah" required></textarea>
-
-    <!-- Dropdown Kategori -->
-    <!-- Contoh bagian form untuk kategori -->
-    <label>Kategori:</label>
-    <select name="id_kategori_masalah" id="kategoriSelect" onchange="checkKategori()">
-      <option value="">--Pilih Kategori--</option>
-      <% kategoriList.forEach((kat) => { %>
-        <option value="<%= kat.id_kategori_masalah %>"><%= kat.nama_kategori %></option>
-      <% }) %>
-      <option value="tambah">+ Tambah Kategori</option>
-    </select>
-
-
-
-    <!-- Input Tambah Kategori -->
-    <div id="kategoriBaruContainer" style="display: none;">
-      <input type="text" id="kategoriBaru" placeholder="Nama Kategori Baru">
-      <button type="button" onclick="tambahKategori()">✅</button>
+<body class="bg-gray-100">
+  <!-- Layout grid: sidebar (1.5fr), konten utama (8fr), sidebar (1.5fr) -->
+  <div class="grid grid-cols-[1.5fr_8fr_1.5fr] min-h-screen">
+    <!-- Sidebar Kiri -->
+    <div class="leftsidebar pr-2">
+      <%- include('../partials/leftsidebar') %>
     </div>
 
-    <!-- Dropdown Periode -->
-    <label>Periode:</label>
-    <select name="id_periode" id="periodeSelect" onchange="checkPeriode()">
-      <option value="">--Pilih Periode--</option>
-      <% periodeList.forEach((per) => { %>
-        <option value="<%= per.id_periode %>"><%= per.tahun_periode %> - <%= per.isp_periode %></option>
-      <% }) %>
-      <option value="tambah">+ Tambah Periode</option>
-    </select>
+    <!-- Konten Utama -->
+    <main class="p-10 bg-white rounded-lg shadow mx-4 my-4">
+      <nav class="text-sm text-gray-400 mb-2">
+        <a href="/admin/dashboard" class="text-gray-500 hover:text-gray-700">Dashboard</a> /
+        <a href="/pengaduan/daftar" class="text-gray-500 hover:text-gray-700">Pengaduan</a> /
+        <a href="/pengaduan/form" class="text-gray-800 font-semibold">Tambah</a>
+       </nav>
+      <h1 class="text-2xl font-bold text-gray-800 mb-4"><%= title %></h1>
 
-    <!-- Input Tambah Periode -->
-    <div id="periodeBaruContainer" style="display: none;">
-      <input type="text" id="tahunPeriodeBaru" placeholder="Tahun Periode">
-      <input type="text" id="ispPeriodeBaru" placeholder="ISP Periode">
-      <button type="button" onclick="tambahPeriode()">✅</button>
+      <% if (error) { %>
+        <p class="text-red-500 mb-4"><%= error %></p>
+      <% } %>
+
+      <form action="/pengaduan/form" method="POST" class="space-y-4">
+        <!-- Nama -->
+        <div>
+          <label class="block text-gray-700 mb-1">Nama:</label>
+          <input type="text" name="nama" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Departemen -->
+        <div>
+          <label class="block text-gray-700 mb-1">Departemen:</label>
+          <select name="departemen" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="HDGA">HDGA</option>
+            <option value="STAFF" selected>STAFF</option>
+            <option value="MARKETING">MARKETING</option>
+            <option value="QUALITY">QUALITY</option>
+            <option value="ACCOUNTING">ACCOUNTING</option>
+            <option value="SALES">SALES</option>
+            <option value="PURCHASE">PURCHASE</option>
+            <option value="QC">QC</option>
+            <option value="PPIC">PPIC</option>
+            <option value="ADVISOR">ADVISOR</option>
+            <option value="DIRECTOR">DIRECTOR</option>
+            <option value="PRCL">PRCL</option>
+          </select>
+        </div>
+
+        <!-- Tanggal Kejadian -->
+        <div>
+          <label class="block text-gray-700 mb-1">Tanggal Kejadian:</label>
+          <input type="date" name="tanggal_kejadian" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Waktu Kejadian -->
+        <div>
+          <label class="block text-gray-700 mb-1">Waktu Kejadian:</label>
+          <input type="time" name="waktu_kejadian" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Kendala Masalah -->
+        <div>
+          <label class="block text-gray-700 mb-1">Kendala Masalah:</label>
+          <textarea name="kendala_masalah" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+
+        <!-- Dropdown Kategori -->
+        <div>
+          <label class="block text-gray-700 mb-1">Kategori:</label>
+          <select name="id_kategori_masalah" id="kategoriSelect" onchange="checkKategori()" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">--Pilih Kategori--</option>
+            <% kategoriList.forEach((kat) => { %>
+              <option value="<%= kat.id_kategori_masalah %>"><%= kat.nama_kategori %></option>
+            <% }) %>
+            <option value="tambah">+ Tambah Kategori</option>
+          </select>
+        </div>
+
+        <!-- Input Tambah Kategori -->
+        <div id="kategoriBaruContainer" class="hidden">
+          <input type="text" id="kategoriBaru" placeholder="Nama Kategori Baru" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2">
+          <button type="button" onclick="tambahKategori()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">Tambah</button>
+        </div>
+
+        <!-- Dropdown Periode -->
+        <div>
+          <label class="block text-gray-700 mb-1">Periode:</label>
+          <select name="id_periode" id="periodeSelect" onchange="checkPeriode()" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">--Pilih Periode--</option>
+            <% periodeList.forEach((per) => { %>
+              <option value="<%= per.id_periode %>"><%= per.tahun_periode %> - <%= per.isp_periode %></option>
+            <% }) %>
+            <option value="tambah">+ Tambah Periode</option>
+          </select>
+        </div>
+
+        <!-- Input Tambah Periode -->
+        <div id="periodeBaruContainer" class="hidden">
+          <input type="text" id="tahunPeriodeBaru" placeholder="Tahun Periode" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2">
+          <input type="text" id="ispPeriodeBaru" placeholder="ISP Periode" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2">
+          <button type="button" onclick="tambahPeriode()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">Tambah</button>
+        </div>
+
+        <!-- Tombol Submit -->
+        <button type="submit" class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg">Simpan Pengaduan</button>
+      </form>
+    </main>
+
+    <!-- Sidebar Kanan -->
+    <div class="rightsidebar pl-2">
+      <%- include('../partials/rightsidebar') %>
     </div>
-
-    <!-- Field-field berikut tidak ditampilkan karena default di database (hanya admin yang mengubah) -->
-    <!-- tanggal_perbaikan, waktu_perbaikan, perbaikan, status (default open) dan keterangan tidak disertakan -->
-
-    <button type="submit">Simpan Pengaduan</button>
-  </form>
+  </div>
 </body>
 </html>

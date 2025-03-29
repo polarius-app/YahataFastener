@@ -4,34 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h2>Register</h2>
-
-    <% if (error) { %>
-        <p style="color:red;"><%= error %></p>
-    <% } %>
-
-    <form action="/register" method="POST" enctype="multipart/form-data">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <input type="text" name="fullname" placeholder="Full Name" required>
-
-        <select name="jabatan" required>
-            <option value="Manager">Manager</option>
-            <option value="Supervisor">Supervisor</option>
-            <option value="Staff" selected>Staff</option>
-        </select>
-
-        <label for="tanggal_masuk">Tanggal Masuk:</label>
-        <input type="date" name="tanggal_masuk" required>
-
-        <label for="foto">Upload Foto:</label>
-        <input type="file" name="foto" accept="image/*">
-
-        <button type="submit">Register</button>
-    </form>
-
-    <p>Already have an account? <a href="/login">Login here</a></p>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+        <div class="mb-4 flex justify-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Yahata_Neji_Corporation_Logo.svg/2560px-Yahata_Neji_Corporation_Logo.svg.png" alt="Yahata Logo" class="w-32">
+        </div>
+        <h2 class="text-2xl font-bold text-center mb-4">Register</h2>
+        <% if (error) { %>
+            <p class="text-red-500 text-sm text-center mb-4"><%= error %></p>
+        <% } %>
+        <form action="/register" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="text" name="username" placeholder="Username" required 
+                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="password" name="password" placeholder="Password" required 
+                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" name="fullname" placeholder="Full Name" required 
+                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            
+            <select name="jabatan" required 
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="Manager">Manager</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="Staff" selected>Staff</option>
+            </select>
+            
+            <label for="tanggal_masuk" class="block text-gray-700">Tanggal Masuk:</label>
+            <input type="date" name="tanggal_masuk" required 
+                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            
+            <label for="foto" class="block text-gray-700">Upload Foto:</label>
+            <input type="file" name="foto" accept="image/*" 
+                   class="w-full p-2 border border-gray-300 rounded-lg">
+            
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">Register</button>
+        </form>
+        <p class="text-center text-sm mt-4">Already have an account? <a href="/login" class="text-blue-500 hover:underline">Login here</a></p>
+    </div>
 </body>
 </html>
