@@ -16,3 +16,14 @@ Frontend: (TailWind CSS, HTML)
 Backend: (Node.js)
 
 Database: (MySQL)
+
+📦 Instalasi
+1. Clone repository ini:
+    https://github.com/abrayudhistira/YahataFastener.git
+2. Instal dependensi
+3. Jalan Project :
+    nodemon app.js
+
+✨ Jangan lupa ⭐ Star repository ini jika kamu merasa terbantu! 🚀
+
+Bisa di-custom sesuai kebutuhan! Mau tambah badge atau dekorasi lainnya? 🚀😎
