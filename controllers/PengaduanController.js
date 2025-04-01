@@ -96,6 +96,7 @@ exports.daftarPengaduan = async (req, res) => {
 
 exports.showByIDPengaduan = async (req, res) => {
     try {
+      const userLogin = await User.findByPk(req.session.user.id_user);
       const { id } = req.params;
       // Cari pengaduan berdasarkan primary key dengan menyertakan relasi kategori dan periode
       const pengaduan = await DaftarMasalah.findByPk(id, {
@@ -117,6 +118,7 @@ exports.showByIDPengaduan = async (req, res) => {
         kategoriList,
         periodeList,
         user: req.session.user, // Kirim data user ke view jika diperlukan
+        userLogin,
         error: null 
       });
     } catch (error) {
@@ -130,6 +132,7 @@ exports.showByIDPengaduan = async (req, res) => {
       const { id } = req.params;
       console.log(`Received update request for pengaduan with id: ${id}`);
       console.log('Input values:');
+      const userLogin = await User.findByPk(req.session.user.id_user); // Ambil data user yang sedang login
       const {
         nama,
         departemen,
@@ -177,7 +180,8 @@ exports.showByIDPengaduan = async (req, res) => {
             waktu_perbaikan, 
             perbaikan, 
             status, 
-            keterangan
+            keterangan,
+            userLogin
           },
           kategoriList,
           periodeList,

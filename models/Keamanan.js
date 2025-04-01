@@ -20,6 +20,15 @@ const Keamanan = sequelize.define('tb_keamanan', {
         type: DataTypes.TEXT,
         allowNull: false
     },
+    id_asset: {  // 🔹 Tambahkan foreign key
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'tb_asset',
+            key: 'id_asset'
+        },
+        onDelete: 'CASCADE'
+    }
 }, {
   tableName: 'tb_keamanan',
   timestamps: false

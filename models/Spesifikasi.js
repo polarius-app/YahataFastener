@@ -16,6 +16,15 @@ const Spesifikasi = sequelize.define('tb_spesifikasi', {
     type: DataTypes.STRING(255),
     allowNull: false
   },
+  id_asset: {  // 🔹 Tambahkan foreign key
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+        model: 'tb_asset',
+        key: 'id_asset'
+    },
+    onDelete: 'CASCADE'
+  }
 }, {
   tableName: 'tb_spesifikasi',
   timestamps: false

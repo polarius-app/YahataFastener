@@ -18,8 +18,17 @@ const Jaringan = sequelize.define('tb_jaringan', {
   },
   pic_microtik: {
     type: DataTypes.BLOB('medium'),
-    allowNull: false
+    allowNull: true
   },
+  id_asset: {  // 🔹 Tambahkan foreign key
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+        model: 'tb_asset',
+        key: 'id_asset'
+    },
+    onDelete: 'CASCADE'
+  }
 }, {
   tableName: 'tb_jaringan',
   timestamps: false
