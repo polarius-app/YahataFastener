@@ -8,6 +8,9 @@ const Spesifikasi = require('../models/Spesifikasi');
 const Software = require('../models/Software');
 const Keamanan = require('../models/Keamanan');
 const Jaringan = require('../models/Jaringan');
+const fs = require('fs');
+const path = require('path');
+const XLSX = require('xlsx');
 
 exports.getAll = async (req, res) => {
   try {

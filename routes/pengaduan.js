@@ -41,4 +41,6 @@ router.post('/periode/tambah', PeriodeController.tambahPeriode);
 
 router.get('/chart', PengaduanController.getChartData);
 
+router.get('/export',PengaduanController.exportPengaduanToExcel)
+
 module.exports = router;

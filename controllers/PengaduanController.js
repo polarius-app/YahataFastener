@@ -1,6 +1,9 @@
 const { DaftarMasalah, KategoriMasalah, Periode } = require('../models');
 const User = require('../models/User'); // Pastikan Anda sudah mengimpor model User
 const { Op, fn, col } = require('sequelize');
+const path = require('path');
+const XLSX = require('xlsx');
+const fs = require('fs');
 
 exports.formPengaduan = async (req, res) => {
   try {
@@ -294,5 +297,52 @@ exports.getChartData = async (req, res) => {
   } catch (error) {
     console.error('Error fetching chart data:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.exportPengaduanToExcel = async (req, res) => {
+  try {
+      // Ambil data pengaduan dari database
+      const pengaduan = await DaftarMasalah.findAll({
+        include: [
+          { model: KategoriMasalah, as: 'kategori' },
+          { model: Periode, as: 'periode' }
+        ]
+      });
+
+      // Format data untuk Excel
+      const data = pengaduan.map(item => ({
+        ID: item.id_daftar_masalah,
+        Nama: item.nama,
+        Departemen: item.departemen,
+        Kategori: item.kategori ? item.kategori.nama_kategori : '-', // Ambil nama kategori dari relasi
+        "Tanggal Kejadian": item.tanggal_kejadian,
+        "Waktu Kejadian": item.waktu_kejadian,
+        "Kendala Masalah": item.kendala_masalah,
+        "Tanggal Perbaikan": item.tanggal_perbaikan || '-',
+        "Waktu Perbaikan": item.waktu_perbaikan || '-',
+        Perbaikan: item.perbaikan || '-',
+        Status: item.status,
+        Keterangan: item.keterangan || '-',
+        Periode: item.periode ? `${item.periode.tahun_periode} - ${item.periode.isp_periode}` : '-' // Ambil periode dari relasi
+      }));
+      // Buat workbook dan worksheet
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Pengaduan");
+
+      // Simpan file sementara
+      const filePath = path.join(__dirname, '../exports/pengaduan.xlsx');
+      XLSX.writeFile(workbook, filePath);
+
+      // Kirim file ke client untuk di-download
+      res.download(filePath, 'pengaduan.xlsx', (err) => {
+          if (err) console.error(err);
+          fs.unlinkSync(filePath); // Hapus file setelah didownload
+      });
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).send("Gagal mengekspor data.");
   }
 };
