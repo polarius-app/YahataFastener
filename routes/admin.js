@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/AdminController');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() }); // Middleware untuk upload foto
+const PengaduanController = require('../controllers/PengaduanController');
 
 function isAuthenticated(req, res, next) {
     if (req.session.user) {

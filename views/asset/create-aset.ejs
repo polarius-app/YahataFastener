@@ -1,83 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Insert Asset</title>
-  <style>
-    label {
-      display: block;
-      margin: 8px 0 4px;
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Function untuk menambah field spesifikasi baru
+    function addSpesifikasi() {
+      const container = document.getElementById("spesifikasiContainer");
+      const index = container.children.length;
+      const spesifikasiItem = document.createElement("div");
+      spesifikasiItem.classList.add("spesifikasi-item", "space-y-2", "border", "p-4", "rounded-lg");
+      spesifikasiItem.innerHTML = `
+        <div>
+          <label for="spesifikasi_${index}" class="block text-gray-700 mb-1">Spesifikasi:</label>
+          <input type="text" name="spesifikasi[]" id="spesifikasi_${index}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Intel Core i7, 16GB RAM">
+        </div>
+        <div>
+          <label for="deskripsi_spesifikasi_${index}" class="block text-gray-700 mb-1">Deskripsi Spesifikasi:</label>
+          <textarea name="deskripsi_spesifikasi[]" id="deskripsi_spesifikasi_${index}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Deskripsi lengkap..."></textarea>
+        </div>
+      `;
+      container.appendChild(spesifikasiItem);
     }
-    input, select {
-      width: 100%;
-      padding: 6px;
-      margin-bottom: 8px;
+
+    // Function untuk menambah field software baru
+    function addSoftware() {
+      const container = document.getElementById("softwareContainer");
+      const index = container.children.length;
+      const softwareItem = document.createElement("div");
+      softwareItem.classList.add("software-item", "space-y-2", "border", "p-4", "rounded-lg");
+      softwareItem.innerHTML = `
+        <div>
+          <label for="nama_software_${index}" class="block text-gray-700 mb-1">Nama Software:</label>
+          <input type="text" name="nama_software[]" id="nama_software_${index}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Microsoft Office">
+        </div>
+        <div>
+          <label for="status_software_${index}" class="block text-gray-700 mb-1">Status Software:</label>
+          <input type="text" name="status_software[]" id="status_software_${index}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Aktif/Tidak Aktif">
+        </div>
+        <div>
+          <label for="kunci_lisensi_${index}" class="block text-gray-700 mb-1">Kunci Lisensi:</label>
+          <input type="text" name="kunci_lisensi[]" id="kunci_lisensi_${index}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Masukkan kunci lisensi">
+        </div>
+      `;
+      container.appendChild(softwareItem);
     }
-    button {
-      padding: 8px 16px;
-      cursor: pointer;
+
+    // Function untuk menambah field keamanan baru
+    function addKeamanan() {
+      const container = document.getElementById("keamananContainer");
+      const index = container.children.length;
+      const keamananItem = document.createElement("div");
+      keamananItem.classList.add("keamanan-item", "space-y-2", "border", "p-4", "rounded-lg");
+      keamananItem.innerHTML = `
+        <div>
+          <label for="keamanan_username_${index}" class="block text-gray-700 mb-1">Username Credentials:</label>
+          <input type="text" name="keamanan_username[]" id="keamanan_username_${index}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: admin">
+        </div>
+        <div>
+          <label for="keamanan_password_${index}" class="block text-gray-700 mb-1">Password Credentials:</label>
+          <input type="text" name="keamanan_password[]" id="keamanan_password_${index}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: password123">
+        </div>
+        <div>
+          <label for="keamanan_keterangan_${index}" class="block text-gray-700 mb-1">Keterangan Credentials:</label>
+          <textarea name="keamanan_keterangan[]" id="keamanan_keterangan_${index}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Login Windows"></textarea>
+        </div>
+      `;
+      container.appendChild(keamananItem);
     }
-  </style>
+  </script>
 </head>
-<body>
-  <h1>Insert Asset</h1>
+<body class="bg-gray-100">
+  <!-- Layout Grid: Sidebar kiri, Konten utama, Sidebar kanan -->
+  <div class="grid grid-cols-[1.5fr_8fr_1.5fr] min-h-screen">
+    <!-- Left Sidebar -->
+    <div class="leftsidebar pr-2">
+      <%- include('../partials/leftsidebar') %>
+    </div>
 
-  <!-- Menampilkan pesan error (opsional) -->
-  <% if (error) { %>
-    <p style="color:red;"><%= error %></p>
-  <% } %>
+    <!-- Konten Utama -->
+    <main class="p-8 bg-white rounded-lg shadow mx-4 my-4">
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">Insert Asset</h1>
 
-  <!-- 
-    Form ini mengirim data ke endpoint "/assets" (sesuaikan dengan route Anda).
-    Pastikan method POST di route menyesuaikan, dan jika ingin upload foto, gunakan enctype="multipart/form-data"
-  -->
-  <form action="/assets" method="POST" enctype="multipart/form-data">
-    <label for="no_asset">No Asset:</label>
-    <input type="text" name="no_asset" id="no_asset" required>
+      <% if (error) { %>
+        <p class="text-red-500 mb-4"><%= error %></p>
+      <% } %>
 
-    <label for="antivirus">Antivirus:</label>
-    <input type="text" name="antivirus" id="antivirus">
+      <!-- Form utama untuk menginput seluruh data -->
+      <form action="/asset/create" method="POST" enctype="multipart/form-data" class="space-y-8">
+        <!-- Section Asset -->
+        <div class="space-y-4">
+          <h2 class="text-xl font-semibold text-gray-700">Asset Information</h2>
+          <!-- NC Asset -->
+          <div>
+            <label for="nc_asset" class="block text-gray-700 mb-1">NC Asset:</label>
+            <input type="text" name="nc_asset" id="nc_asset" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Antivirus -->
+          <div>
+            <label for="antivirus" class="block text-gray-700 mb-1">Antivirus:</label>
+            <input type="text" name="antivirus" id="antivirus" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Foto -->
+          <div>
+            <label for="foto" class="block text-gray-700 mb-1">Foto:</label>
+            <input type="file" name="foto" id="foto" accept="image/*" class="w-full">
+          </div>
+          <!-- Hostname -->
+          <div>
+            <label for="hostname" class="block text-gray-700 mb-1">Hostname:</label>
+            <input type="text" name="hostname" id="hostname" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- User -->
+          <div>
+            <label for="user" class="block text-gray-700 mb-1">Nama User:</label>
+            <input type="text" name="user" id="user" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Departemen -->
+          <div>
+            <h2 class="text-xl font-semibold text-gray-700">Departemen</h2>
+            <label class="block text-gray-700 mb-1">Nama Departemen:</label>
+            <select name="id_departemen" id="departemenSelect" onchange="checkDepartemen()" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">--Pilih Departemen--</option>
+              <% departemenList.forEach((dept) => { %>
+                <option value="<%= dept.id_departemen %>"><%= dept.departemen %> (<%= dept.email %>)</option>
+              <% }) %>
+              <option value="tambah">+ Tambah Departemen</option>
+            </select>
+          </div>
+          <!-- Input untuk Departemen Baru -->
+          <div id="departemenBaruContainer" class="hidden mt-4">
+            <label for="departemenBaru" class="block text-gray-700 mb-1">Nama Departemen Baru:</label>
+            <input type="text" id="departemenBaru" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Masukkan nama departemen baru">
+            <label for="departemenEmail" class="block text-gray-700 mb-1 mt-2">Email Departemen:</label>
+            <input type="email" id="departemenEmail" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Masukkan email departemen">
+            <button type="button" onclick="tambahDepartemen()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">Tambah Departemen</button>
+          </div>
+          <script>
+            function checkDepartemen() {
+              const departemenSelect = document.getElementById("departemenSelect");
+              const departemenBaruContainer = document.getElementById("departemenBaruContainer");
+              if (departemenSelect.value === "tambah") {
+                departemenBaruContainer.classList.remove("hidden");
+              } else {
+                departemenBaruContainer.classList.add("hidden");
+              }
+            }
+            async function tambahDepartemen() {
+              const namaDepartemen = document.getElementById("departemenBaru").value.trim();
+              const departemenEmail = document.getElementById("departemenEmail").value.trim();
+              if (!namaDepartemen) return alert("Nama departemen tidak boleh kosong!");
+              if (!departemenEmail) return alert("Email departemen tidak boleh kosong!");
+              try {
+                const response = await fetch('/asset/departemen/tambah', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ nama_departemen: namaDepartemen, email: departemenEmail })
+                });
+                const result = await response.json();
+                if (result.success) {
+                  const select = document.getElementById("departemenSelect");
+                  const option = document.createElement("option");
+                  option.value = result.id;
+                  option.textContent = namaDepartemen;
+                  select.insertBefore(option, select.lastElementChild);
+                  select.value = result.id;
+                  document.getElementById("departemenBaruContainer").classList.add("hidden");
+                  document.getElementById("departemenBaru").value = "";
+                  document.getElementById("departemenEmail").value = "";
+                } else {
+                  alert("Gagal menambah Departemen: " + result.message);
+                }
+              } catch (error) {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat menambah departemen.");
+              }
+            }
+          </script>
+          <!-- Tanggal Pembelian -->
+          <div>
+            <label for="tanggal_pembelian" class="block text-gray-700 mb-1">Tanggal Pembelian:</label>
+            <input type="date" name="tanggal_pembelian" id="tanggal_pembelian" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <!-- Merk -->
+          <div>
+            <h2 class="text-xl font-semibold text-gray-700">Merk</h2>
+            <label class="block text-gray-700 mb-1">Nama Merk:</label>
+            <select name="id_merek" id="merekSelect" onchange="checkMerek()" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">--Pilih Merek--</option>
+              <% merekList.forEach((mrk) => { %>
+                <option value="<%= mrk.id_merek %>"><%= mrk.nama_merek %></option>
+              <% }) %>
+              <option value="tambah">+ Tambah Merk</option>
+            </select>
+          </div>
+          <!-- Input untuk Merk Baru -->
+          <div id="merekBaruContainer" class="hidden mt-4">
+            <label for="merekBaru" class="block text-gray-700 mb-1">Nama Merk Baru:</label>
+            <input type="text" id="merekBaru" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Masukkan nama merk baru">
+            <button type="button" onclick="tambahMerek()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">Tambah Merk</button>
+          </div>
+          <script>
+            function checkMerek() {
+              const merekSelect = document.getElementById("merekSelect");
+              const merekBaruContainer = document.getElementById("merekBaruContainer");
+              if (merekSelect.value === "tambah") {
+                merekBaruContainer.classList.remove("hidden");
+              } else {
+                merekBaruContainer.classList.add("hidden");
+              }
+            }
+            async function tambahMerek() {
+              const namaMerekInput = document.getElementById("merekBaru");
+              if (!namaMerekInput) {
+                console.error("Elemen dengan ID 'merekBaru' tidak ditemukan.");
+                return;
+              }
+              const namaMerek = namaMerekInput.value.trim();
+              if (!namaMerek) return alert("Nama merk tidak boleh kosong!");
+              try {
+                const response = await fetch('/asset/merek/tambah', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ nama_merek: namaMerek })
+                });
+                const result = await response.json();
+                if (result.success) {
+                  const select = document.getElementById("merekSelect");
+                  const option = document.createElement("option");
+                  option.value = result.id;
+                  option.textContent = namaMerek;
+                  select.insertBefore(option, select.lastElementChild);
+                  select.value = result.id;
+                  document.getElementById("merekBaruContainer").classList.add("hidden");
+                  namaMerekInput.value = "";
+                } else {
+                  alert("Gagal menambah Merk: " + result.message);
+                }
+              } catch (error) {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat menambah Merk.");
+              }
+            }
+          </script>
+          <!-- Tipe Merek -->
+          <div>
+            <h2 class="text-xl font-semibold text-gray-700">Tipe Merek</h2>
+            <label class="block text-gray-700 mb-1">Tipe:</label>
+            <select name="id_tipe_merek" id="tipeSelect" onchange="checkTipe()" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">--Pilih Tipe Merek--</option>
+              <% tipeMerekList.forEach((tipe) => { %>
+                <option value="<%= tipe.id_tipe_merek %>"><%= tipe.nama_tipe_merek %></option>
+              <% }) %>
+              <option value="tambah">+ Tambah Tipe Merek</option>
+            </select>
+          </div>
+          <!-- Input untuk Tipe Merek Baru -->
+          <div id="tipeBaruContainer" class="hidden mt-4">
+            <label for="tipeBaru" class="block text-gray-700 mb-1">Tipe Merek Baru:</label>
+            <input type="text" id="tipeBaru" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Masukkan tipe merek baru">
+            <button type="button" onclick="tambahTipe()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">Tambah Tipe Merek</button>
+          </div>
+          <script>
+            function checkTipe() {
+              const tipeSelect = document.getElementById("tipeSelect");
+              const tipeBaruContainer = document.getElementById("tipeBaruContainer");
+              if (tipeSelect.value === "tambah") {
+                tipeBaruContainer.classList.remove("hidden");
+              } else {
+                tipeBaruContainer.classList.add("hidden");
+              }
+            }
+            async function tambahTipe() {
+              const tipeInput = document.getElementById("tipeBaru");
+              if (!tipeInput) {
+                console.error("Elemen dengan ID 'tipeBaru' tidak ditemukan.");
+                return;
+              }
+              const tipe = tipeInput.value.trim();
+              if (!tipe) return alert("Tipe Merek tidak boleh kosong!");
+              try {
+                const response = await fetch('/asset/tipe-merek/tambah', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ nama_tipe_merek: tipe })
+                });
+                const result = await response.json();
+                if (result.success) {
+                  const select = document.getElementById("tipeSelect");
+                  const option = document.createElement("option");
+                  option.value = result.id;
+                  option.textContent = tipe;
+                  select.insertBefore(option, select.lastElementChild);
+                  select.value = result.id;
+                  document.getElementById("tipeBaruContainer").classList.add("hidden");
+                  tipeInput.value = "";
+                } else {
+                  alert("Gagal menambah Tipe Merek: " + result.message);
+                }
+              } catch (error) {
+                console.error("Error:", error);
+                alert("Terjadi kesalahan saat menambah Tipe Merek.");
+              }
+            }
+          </script>
+          <!-- Umur Asset -->
+          <div>
+            <label for="umur_asset" class="block text-gray-700 mb-1">Umur Asset:</label>
+            <input type="text" name="umur_asset" id="umur_asset" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: 4 Tahun 3 Bulan">
+          </div>
+        </div>
 
-    <label for="foto">Foto:</label>
-    <input type="file" name="foto" id="foto" accept="image/*">
+        <!-- Section Spesifikasi -->
+        <div class="space-y-4 border-t pt-4">
+          <h2 class="text-xl font-semibold text-gray-700">Spesifikasi</h2>
+          <div id="spesifikasiContainer">
+            <!-- Field pertama spesifikasi -->
+            <div class="spesifikasi-item space-y-2 border p-4 rounded-lg">
+              <div>
+                <label for="spesifikasi_0" class="block text-gray-700 mb-1">Spesifikasi:</label>
+                <input type="text" name="spesifikasi[]" id="spesifikasi_0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Intel Core i7, 16GB RAM">
+              </div>
+              <div>
+                <label for="deskripsi_spesifikasi_0" class="block text-gray-700 mb-1">Deskripsi Spesifikasi:</label>
+                <textarea name="deskripsi_spesifikasi[]" id="deskripsi_spesifikasi_0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Deskripsi lengkap..."></textarea>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="addSpesifikasi()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">Add More Spesifikasi</button>
+        </div>
 
-    <label for="hostname">Hostname:</label>
-    <input type="text" name="hostname" id="hostname">
+        <!-- Section Software -->
+        <div class="space-y-4 border-t pt-4">
+          <h2 class="text-xl font-semibold text-gray-700">Software</h2>
+          <div id="softwareContainer">
+            <!-- Field pertama software -->
+            <div class="software-item space-y-2 border p-4 rounded-lg">
+              <div>
+                <label for="nama_software_0" class="block text-gray-700 mb-1">Nama Software:</label>
+                <input type="text" name="nama_software[]" id="nama_software_0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Microsoft Office">
+              </div>
+              <div>
+                <label for="status_software_0" class="block text-gray-700 mb-1">Status Software:</label>
+                <input type="text" name="status_software[]" id="status_software_0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Aktif/Tidak Aktif">
+              </div>
+              <div>
+                <label for="kunci_lisensi_0" class="block text-gray-700 mb-1">Kunci Lisensi:</label>
+                <input type="text" name="kunci_lisensi[]" id="kunci_lisensi_0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Masukkan kunci lisensi">
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="addSoftware()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">Add More Software</button>
+        </div>
 
-    <label for="user">User:</label>
-    <input type="text" name="user" id="user">
+        <!-- Section Keamanan -->
+        <div class="space-y-4 border-t pt-4">
+          <h2 class="text-xl font-semibold text-gray-700">Keamanan</h2>
+          <div id="keamananContainer">
+            <!-- Field pertama keamanan -->
+            <div class="keamanan-item space-y-2 border p-4 rounded-lg">
+              <div>
+                <label for="keamanan_username_0" class="block text-gray-700 mb-1">Username Credentials:</label>
+                <input type="text" name="keamanan_username[]" id="keamanan_username_0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: admin">
+              </div>
+              <div>
+                <label for="keamanan_password_0" class="block text-gray-700 mb-1">Password Credentials:</label>
+                <input type="text" name="keamanan_password[]" id="keamanan_password_0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: password123">
+              </div>
+              <div>
+                <label for="keamanan_keterangan_0" class="block text-gray-700 mb-1">Keterangan Credentials:</label>
+                <textarea name="keamanan_keterangan[]" id="keamanan_keterangan_0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: Login Windows"></textarea>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="addKeamanan()" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">Add More Keamanan</button>
+        </div>
 
-    <!-- Contoh dropdown Departemen (Anda perlu mengirim departemenList dari controller) -->
-    <label for="departemen">Departemen:</label>
-    <select name="departemen" id="departemen">
-      <option value="">--Pilih Departemen--</option>
-      <% departemenList.forEach((dept) => { %>
-        <option value="<%= dept.id_departemen %>"><%= dept.nama_departemen %></option>
-      <% }) %>
-    </select>
+        <!-- Section Jaringan -->
+        <div class="space-y-4 border-t pt-4">
+          <h2 class="text-xl font-semibold text-gray-700">Jaringan</h2>
+          <div>
+            <label for="ip_address" class="block text-gray-700 mb-1">Ip Address:</label>
+            <input type="text" name="ip_address" id="ip_address" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Contoh: 192.168.1.2">
+          </div>
+          <div>
+            <label for="mac_address" class="block text-gray-700 mb-1">MAC Address:</label>
+            <textarea name="mac_address" id="mac_address" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="80D:91F:12C:7U:099A"></textarea>
+          </div>
+          <div>
+            <label for="pic_microtik" class="block text-gray-700 mb-1">PIC Mikrotik:</label>
+            <input type="file" name="pic_microtik" id="pic_microtik" accept="image/*" class="w-full">
+          </div>
+        </div>
 
-    <label for="tanggal_penempatan">Tanggal Penempatan:</label>
-    <input type="date" name="tanggal_penempatan" id="tanggal_penempatan">
+        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan Asset</button>
+      </form>
+    </main>
 
-    <!-- Contoh dropdown Merek -->
-    <label for="merk">Merek:</label>
-    <select name="merk" id="merk">
-      <option value="">--Pilih Merek--</option>
-      <% merekList.forEach((merek) => { %>
-        <option value="<%= merek.id_merek %>"><%= merek.nama_merek %></option>
-      <% }) %>
-    </select>
-
-    <!-- Contoh dropdown Tipe Merek -->
-    <label for="tipe_merek">Tipe Merek:</label>
-    <select name="tipe_merek" id="tipe_merek">
-      <option value="">--Pilih Tipe Merek--</option>
-      <% tipeMerekList.forEach((tm) => { %>
-        <option value="<%= tm.id_tipe_merek %>"><%= tm.nama_tipe_merek %></option>
-      <% }) %>
-    </select>
-
-    <button type="submit">Simpan Asset</button>
-  </form>
+    <!-- Right Sidebar -->
+    <div class="rightsidebar pl-2">
+      <%- include('../partials/rightsidebar') %>
+    </div>
+  </div>
 </body>
 </html>

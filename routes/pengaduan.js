@@ -39,4 +39,6 @@ router.post('/kategori/tambah', KategoriController.tambahKategori);
 // POST: Tambah Periode (AJAX)
 router.post('/periode/tambah', PeriodeController.tambahPeriode);
 
+router.get('/chart', PengaduanController.getChartData);
+
 module.exports = router;

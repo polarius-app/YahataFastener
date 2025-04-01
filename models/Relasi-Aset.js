@@ -1,3 +1,4 @@
+// models/Relasi-Aset.js
 const Asset = require('./Asset');
 const Merek = require('./Merek');
 const Jaringan = require('./Jaringan');
@@ -7,37 +8,37 @@ const Spesifikasi = require('./Spesifikasi');
 const TipeMerek = require('./TipeMerek');
 const Software = require('./Software');
 
-// Contoh relasi: Asset -> Merek
+// Relasi Asset -> Merek
 Asset.belongsTo(Merek, {
-  foreignKey: 'merk',
+  foreignKey: 'id_merek', // gunakan nama kolom sesuai model
   as: 'merek'
 });
 Merek.hasMany(Asset, {
-  foreignKey: 'merk',
+  foreignKey: 'id_merek',
   as: 'assets'
 });
 
-// Contoh relasi: Asset -> TipeMerek
+// Relasi Asset -> TipeMerek
 Asset.belongsTo(TipeMerek, {
-  foreignKey: 'tipe_merek',
+  foreignKey: 'id_tipe_merek', // gunakan nama kolom sesuai model
   as: 'tipeMerek'
 });
 TipeMerek.hasMany(Asset, {
-  foreignKey: 'tipe_merek',
+  foreignKey: 'id_tipe_merek',
   as: 'assets'
 });
 
-// Contoh relasi: Asset -> Departemen
+// Relasi Asset -> Departemen
 Asset.belongsTo(Departemen, {
-  foreignKey: 'departemen',
+  foreignKey: 'id_departemen', // gunakan nama kolom sesuai model
   as: 'departemenData'
 });
 Departemen.hasMany(Asset, {
-  foreignKey: 'departemen',
+  foreignKey: 'id_departemen',
   as: 'assets'
 });
 
-// Contoh relasi: Spesifikasi -> Asset
+// Relasi Spesifikasi -> Asset
 Spesifikasi.belongsTo(Asset, {
   foreignKey: 'id_asset',
   as: 'asset'
@@ -47,7 +48,7 @@ Asset.hasMany(Spesifikasi, {
   as: 'spesifikasi'
 });
 
-// Contoh relasi: Software -> Asset
+// Relasi Software -> Asset
 Software.belongsTo(Asset, {
   foreignKey: 'id_asset',
   as: 'asset'
@@ -57,7 +58,24 @@ Asset.hasMany(Software, {
   as: 'software'
 });
 
-// Export semua model
+Keamanan.belongsTo(Asset, {
+  foreignKey: 'id_asset',
+  as: 'asset'
+});
+Asset.hasMany(Keamanan, {
+  foreignKey: 'id_asset',
+  as: 'keamanan'
+});
+
+Jaringan.belongsTo(Asset, {
+  foreignKey: 'id_asset',
+  as: 'asset'
+});
+Asset.hasMany(Jaringan, {
+  foreignKey: 'id_asset',
+  as: 'jaringan'
+});
+
 module.exports = {
   Asset,
   Merek,

@@ -1,4 +1,6 @@
 const { DaftarMasalah, KategoriMasalah, Periode } = require('../models');
+const User = require('../models/User'); // Pastikan Anda sudah mengimpor model User
+const { Op, fn, col } = require('sequelize');
 
 exports.formPengaduan = async (req, res) => {
   try {
@@ -7,6 +9,7 @@ exports.formPengaduan = async (req, res) => {
     // Ambil data periode untuk dropdown (opsional)
     const periodeList = await Periode.findAll();
     const tb_daftar_masalah = await DaftarMasalah.findByPk(req.params.id); // Sesuaikan dengan kebutuhan
+    const userLogin = await User.findByPk(req.session.user.id_user); // Ambil data user yang sedang login
 
     res.render('pengaduan/pengaduan_form', {
       title: 'Form Pengaduan Masalah',
@@ -14,6 +17,7 @@ exports.formPengaduan = async (req, res) => {
       periodeList,
       tb_daftar_masalah, // Kirim data daftar masalah jika diperlukan
       user: req.session.user, // Kirim data user ke view jika diperlukan
+      userLogin,
       error: null
     });
   } catch (error) {
@@ -65,6 +69,7 @@ exports.simpanPengaduan = async (req, res) => {
   
 exports.daftarPengaduan = async (req, res) => {
   try {
+    const userLogin = await User.findByPk(req.session.user.id_user); // Ambil data user yang sedang login
     // Ambil semua data pengaduan termasuk relasi kategori & periode
     const daftar = await DaftarMasalah.findAll({
       include: [
@@ -78,6 +83,7 @@ exports.daftarPengaduan = async (req, res) => {
       title: 'Daftar Pengaduan Masalah',
       daftar,
       user: req.session.user, // Kirim data user ke view jika diperlukan
+      userLogin
     });
   } catch (error) {
     console.error(error);
@@ -234,4 +240,59 @@ exports.showByIDPengaduan = async (req, res) => {
       console.error(error);
       res.status(500).send('Server error.');
     }
-  };  
+  };
+
+exports.getChartData = async (req, res) => {
+  try {
+    const selectedYear = parseInt(req.query.year) || new Date().getFullYear();
+
+    // Query untuk data closed
+    const closedDataResult = await DaftarMasalah.findAll({
+      attributes: [
+        [fn('MONTH', col('tanggal_kejadian')), 'month'],
+        [fn('COUNT', col('id_daftar_masalah')), 'count']
+      ],
+      where: {
+        status: 'close',
+        tanggal_kejadian: {
+          [Op.between]: [new Date(selectedYear, 0, 1), new Date(selectedYear, 11, 31)]
+        }
+      },
+      group: [fn('MONTH', col('tanggal_kejadian'))],
+      raw: true
+    });
+
+    // Query untuk data open
+    const openDataResult = await DaftarMasalah.findAll({
+      attributes: [
+        [fn('MONTH', col('tanggal_kejadian')), 'month'],
+        [fn('COUNT', col('id_daftar_masalah')), 'count']
+      ],
+      where: {
+        status: 'open',
+        tanggal_kejadian: {
+          [Op.between]: [new Date(selectedYear, 0, 1), new Date(selectedYear, 11, 31)]
+        }
+      },
+      group: [fn('MONTH', col('tanggal_kejadian'))],
+      raw: true
+    });
+
+    // Format data untuk dikirim ke frontend
+    const dataClosed = Array(12).fill(0);
+    const dataOpen = Array(12).fill(0);
+
+    closedDataResult.forEach(item => {
+      dataClosed[item.month - 1] = parseInt(item.count);
+    });
+
+    openDataResult.forEach(item => {
+      dataOpen[item.month - 1] = parseInt(item.count);
+    });
+
+    res.json({ dataClosed, dataOpen });
+  } catch (error) {
+    console.error('Error fetching chart data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

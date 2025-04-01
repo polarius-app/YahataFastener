@@ -1,11 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Ini adalah List Asset</h1>
+<body class="bg-gray-50">
+  <div class="grid grid-cols-[1.5fr_8fr_1.5fr] min-h-screen">
+    
+    <!-- Left Sidebar -->
+    <div class="leftsidebar pr-2">
+      <%- include('../partials/leftsidebar') %>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="p-8 bg-white rounded-lg shadow mx-4 my-4">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4"><%= title %></h1>
+        <nav class="text-sm mb-2 flex space-x-2 items-center">
+            <a href="/admin/dashboard" class="flex items-center text-gray-500 hover:text-gray-700">
+              <i class="fi fi-rr-house-chimney mr-2"></i>
+              <span>Dashboard</span>
+            </a>
+            <i class="fi fi-rr-angle-small-right text-sm text-gray-500"></i>
+            <a href="/asset/" class="flex items-center text-gray-500 hover:text-gray-700">
+              <i class="fi fi-rr-users mr-2"></i>
+              <span>Asset</span>
+            </a>
+          </nav>
+
+      <a href="/asset/new" class="flex items-center text-blue-500 hover:text-gray-700">
+          <i class="fi fi-rr-building mr-2"></i>
+          <span>Tambah Asset</span>
+        </a>
+      
+      <table class="min-w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border px-4 py-2">ID</th>
+            <th class="border px-4 py-2">NC Asset</th>
+            <th class="border px-4 py-2">Hostname</th>
+            <th class="border px-4 py-2">User</th>
+            <th class="border px-4 py-2">Departemen</th>
+            <th class="border px-4 py-2">Merek</th>
+            <th class="border px-4 py-2">Tipe Merek</th>
+            <th class="border px-4 py-2">Tanggal Pembelian</th>
+            <th class="border px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% assets.forEach(asset => { %>
+          <tr class="hover:bg-gray-100">
+            <td class="border px-4 py-2"><%= asset.id_asset %></td>
+            <td class="border px-4 py-2"><%= asset.nc_asset %></td>
+            <td class="border px-4 py-2"><%= asset.hostname %></td>
+            <td class="border px-4 py-2"><%= asset.user %></td>
+            <td class="border px-4 py-2"><%= asset.departemenData ? asset.departemenData.departemen : '-' %></td>
+            <td class="border px-4 py-2"><%= asset.merek ? asset.merek.nama_merek : '-' %></td>
+            <td class="border px-4 py-2"><%= asset.tipeMerek ? asset.tipeMerek.nama_tipe_merek : '-' %></td>
+            <td class="border px-4 py-2">
+              <% if (asset.tanggal_pembelian) { %>
+                <%= new Date(asset.tanggal_pembelian).toLocaleDateString() %>
+              <% } else { %>
+                -
+              <% } %>
+            </td>
+            <td class="border px-4 py-2">
+              <a href="/asset/edit/<%= asset.id_asset %>" class="text-blue-500 hover:underline">Edit</a> |
+              <a href="/asset/delete/<%= asset.id_asset %>" class="text-red-500 hover:underline" onclick="return confirm('Are you sure you want to delete this asset?')">Delete</a>
+            </td>
+          </tr>
+          <!-- Baris detail gabungan -->
+          <tr>
+            <td colspan="9" class="border px-4 py-2 bg-gray-100">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Spesifikasi -->
+                <div>
+                  <h3 class="font-bold text-gray-700">Spesifikasi</h3>
+                  <ul class="list-disc pl-5 text-gray-600">
+                    <% if (asset.spesifikasi && asset.spesifikasi.length > 0) { %>
+                      <% asset.spesifikasi.forEach(spec => { %>
+                        <li><%= spec.spesifikasi %>: <%= spec.deskripsi_spesifikasi %></li>
+                      <% }); %>
+                    <% } else { %>
+                      <li>-</li>
+                    <% } %>
+                  </ul>
+                </div>
+                <!-- Software -->
+                <div>
+                  <h3 class="font-bold text-gray-700">Software</h3>
+                  <ul class="list-disc pl-5 text-gray-600">
+                    <% if (asset.software && asset.software.length > 0) { %>
+                      <% asset.software.forEach(soft => { %>
+                        <li><%= soft.nama_software %> (<%= soft.status %>) || <%= soft.kunci_lisensi %></li>
+                      <% }); %>
+                    <% } else { %>
+                      <li>-</li>
+                    <% } %>
+                  </ul>
+                </div>
+                <!-- Keamanan -->
+                <div>
+                  <h3 class="font-bold text-gray-700">Keamanan</h3>
+                  <ul class="list-disc pl-5 text-gray-600">
+                    <% if (asset.keamanan && asset.keamanan.length > 0) { %>
+                      <% asset.keamanan.forEach(sec => { %>
+                        <li> Username : <%= sec.username %> || Password : <%= sec.password %> || <%= sec.keterangan %></li>
+                      <% }); %>
+                    <% } else { %>
+                      <li>-</li>
+                    <% } %>
+                  </ul>
+                </div>
+                <!-- Jaringan -->
+                <div>
+                  <h3 class="font-bold text-gray-700">Jaringan</h3>
+                  <ul class="list-disc pl-5 text-gray-600">
+                    <% if (asset.jaringan && asset.jaringan.length > 0) { %>
+                      <% asset.jaringan.forEach(net => { %>
+                        <li>IP: <%= net.ip_address %> || MAC: <%= net.mac_address %></li>
+                      <% }); %>
+                    <% } else { %>
+                      <li>-</li>
+                    <% } %>
+                  </ul>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <% }) %>                
+        </tbody>
+      </table>
+    </main>
+    
+    <!-- Right Sidebar -->
+    <div class="rightsidebar pl-2">
+      <%- include('../partials/rightsidebar') %>
+    </div>
+    
+  </div>
 </body>
 </html>

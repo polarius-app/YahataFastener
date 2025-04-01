@@ -9,16 +9,17 @@ const adminRoutes = require('./routes/admin');
 const pengaduanRoutes = require('./routes/pengaduan');
 const assetRoutes = require('./routes/asset');
 require('dotenv').config();
+require('./models/Relasi-Aset');
 
 const app = express();
 
 app.set('view engine', 'ejs');
+// Mengatur path views ke folder "views" dan "views/public"
 app.set('views', [__dirname + '/views', __dirname + '/views/public']);
 
 // Middleware untuk form URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Tambahkan middleware untuk parsing JSON
+// Middleware untuk parsing JSON
 app.use(express.json());
 
 app.use(session({
@@ -27,8 +28,9 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Akses ke folder assets
+// Mengakses folder static: assets dan views/public (untuk font, css, dll.)
 app.use(express.static(__dirname + '/assets'));
+app.use(express.static(__dirname + '/views/public')); // Perbaikan: tambahkan slash sebelum "views/public"
 
 sequelize.sync()
     .then(() => console.log('Database connected'))
@@ -45,3 +47,22 @@ app.use('/asset', assetRoutes);
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000');
 });
+//Auto ShutDown Server dalam 2,5 jam dari sekarang
+// const shutdownTime = 2.5 * 60 * 60 * 1000; // 2.5 hours in milliseconds
+
+// setTimeout(() => {
+//   console.log('Server akan dimatikan sekarang setelah 2,5 jam. Menyimpan semua perubahan dan shutdown secara graceful...');
+//   // Tutup koneksi database jika diperlukan
+//   sequelize.close()
+//     .then(() => {
+//       console.log('Koneksi database berhasil ditutup.');
+//       server.close(() => {
+//         console.log('Server telah dimatikan.');
+//         process.exit(0);
+//       });
+//     })
+//     .catch(err => {
+//       console.error('Error menutup koneksi database:', err);
+//       process.exit(1);
+//     });
+// }, shutdownTime);

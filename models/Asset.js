@@ -36,6 +36,18 @@ const Asset = sequelize.define('tb_asset', {
     type: DataTypes.STRING(50),
     allowNull: false
   },
+  id_departemen: {         // Foreign key untuk Departemen
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  id_merek: {              // Foreign key untuk Merek
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  id_tipe_merek: {         // Foreign key untuk Tipe Merek
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }
 }, {
   tableName: 'tb_asset',
   timestamps: false

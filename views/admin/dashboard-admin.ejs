@@ -6,9 +6,12 @@
   <title>Admin Dashboard</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Ikon -->
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
 </head>
 <body class="bg-gray-50">
-  <!-- Layout grid dengan custom template kolom: sidebar (1.5fr), konten utama (8fr), sidebar (1.5fr) -->
   <div class="grid grid-cols-[1.5fr_8fr_1.5fr] min-h-screen">
     <!-- Sidebar Kiri -->
     <div class="leftsidebar pr-2">
@@ -17,6 +20,15 @@
     
     <!-- Konten Utama -->
     <main class="content p-10">
+      <!-- Breadcrumb Navigation -->
+      <nav class="text-sm mb-2 flex space-x-2 items-center">
+        <a href="/admin/dashboard" class="flex items-center text-gray-500 font-regular">
+          <i class="fi fi-rr-house-chimney mr-2"></i>
+          <span>Dashboard</span>
+        </a>
+      </nav>
+      
+      <!-- Profil Admin -->
       <div class="flex items-center mb-6">
         <% if (foto) { %>
           <img src="data:image/jpeg;base64,<%= foto.toString('base64') %>" 
@@ -29,12 +41,52 @@
         <% } %>
         <h2 class="text-2xl font-semibold">Welcome, <%= fullname %>!</h2>
       </div>
-
-    <p class="text-lg mb-4">Ini adalah Dashboard Admin.</p>
-
       
-      <!-- Link Logout -->
-      <a href="/logout" class="text-blue-500 hover:underline inline-block mt-6">Logout</a>
+      <p class="text-lg mb-4">Ini adalah Dashboard Admin.</p>
+
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-white p-4 rounded-lg shadow flex items-center">
+          <i class="fi fi-rr-user text-3xl text-blue-600 mr-4"></i>
+          <div>
+            <p class="text-sm text-gray-500">Total Admin</p>
+            <p class="text-xl font-bold"><%= totalAdmin %></p>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow flex items-center">
+          <i class="fi fi-rr-users text-3xl text-green-600 mr-4"></i>
+          <div>
+            <p class="text-sm text-gray-500">Total User</p>
+            <p class="text-xl font-bold"><%= totalUser %></p>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow flex items-center">
+          <i class="fi fi-rr-box text-3xl text-yellow-600 mr-4"></i>
+          <div>
+            <p class="text-sm text-gray-500">Total Asset</p>
+            <p class="text-xl font-bold"><%= totalAsset %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropdown Filter Tahun untuk Chart -->
+      <div class="mb-4">
+        <label class="block text-gray-700 mb-1">Filter Chart Berdasarkan Tahun:</label>
+        <select id="yearFilter" class="w-48 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="updateChartByYear()">
+          <% availableYears.forEach(year => { %>
+            <option value="<%= year %>" <%= year === selectedYear ? 'selected' : '' %>><%= year %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <!-- Line Chart: Pengaduan Per Bulan -->
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-xl font-semibold mb-4">Pengaduan Per Bulan (<span id="chartYear"><%= selectedYear %></span>)</h3>
+        <canvas id="pengaduanChart"></canvas>
+      </div>
+
+      <!-- Logout -->
+      <a href="/logout" class="inline-block mt-6 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-blue-600">Logout</a>
     </main>
     
     <!-- Sidebar Kanan -->
@@ -42,5 +94,85 @@
       <%- include('../partials/rightsidebar') %>
     </div>
   </div>
+
+  <!-- Chart.js Script -->
+  <script>
+    // Fungsi untuk merender chart berdasarkan tahun yang dipilih
+    function renderChart(year, labels, dataClosed, dataOpen) {
+      document.getElementById('chartYear').textContent = year;
+      const ctx = document.getElementById('pengaduanChart').getContext('2d');
+      
+      // Jika chart sudah ada, destroy dulu sebelum membuat yang baru
+      if(window.pengaduanChartInstance) {
+        window.pengaduanChartInstance.destroy();
+      }
+      
+      window.pengaduanChartInstance = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Closed",
+              data: dataClosed,
+              borderColor: "blue",
+              backgroundColor: "rgba(0, 0, 255, 0.1)",
+              fill: true,
+              tension: 0.4
+            },
+            {
+              label: "Open",
+              data: dataOpen,
+              borderColor: "red",
+              backgroundColor: "rgba(255, 0, 0, 0.1)",
+              fill: true,
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "top" }
+          }
+        }
+      });
+    }
+
+    // Inisialisasi chart dengan data yang dikirim dari server
+    const labels = <%- JSON.stringify(labelsBulan) %>;
+    const dataClosed = <%- JSON.stringify(dataClosed) %>;
+    const dataOpen = <%- JSON.stringify(dataOpen) %>;
+    renderChart(<%- selectedYear %>, labels, dataClosed, dataOpen);
+
+    // Event listener untuk dropdown filter tahun
+    // document.getElementById('yearFilter').addEventListener('change', function() {
+    //   const selectedYear = this.value;
+    //   // Lakukan request AJAX ke server untuk mendapatkan data chart berdasarkan tahun
+    //   fetch(`/pengaduan/chart?year=${selectedYear}`)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       // data harus mengandung dataClosed dan dataOpen dalam bentuk array
+    //       renderChart(parseInt(selectedYear), labels, data.dataClosed, data.dataOpen);
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching chart data:', error);
+    //     });
+    // });
+    function updateChartByYear() {
+      const selectedYear = document.getElementById('yearFilter').value;
+
+      // Lakukan request ke server untuk mendapatkan data terbaru
+      fetch(`/pengaduan/chart?year=${selectedYear}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('chartYear').textContent = selectedYear;
+          renderChart(parseInt(selectedYear), labels, data.dataClosed, data.dataOpen);
+        })
+        .catch(error => {
+          console.error('Error fetching chart data:', error);
+        });
+    }
+  </script>
 </body>
 </html>

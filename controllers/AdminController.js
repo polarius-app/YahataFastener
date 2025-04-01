@@ -1,5 +1,7 @@
 const User = require('../models/User');
-const { Op, where } = require('sequelize');
+const { Op, where, fn, col } = require('sequelize');
+const Asset = require('../models/Asset');
+const DaftarMasalah = require('../models/DaftarMasalah');
 
 exports.showUser = async (req, res) => {
     try {
@@ -48,6 +50,7 @@ exports.showUser = async (req, res) => {
 
         // Step 6: Ambil data admin yang sedang login
         const admin = await User.findByPk(req.session.user.id_user);
+        const userLogin = await User.findByPk(req.session.user.id_user);
         const fullname = admin ? admin.fullname : 'Admin';
         const foto = req.session.user.foto;
 
@@ -60,7 +63,8 @@ exports.showUser = async (req, res) => {
             totalPages: totalPages,
             totalUsers: totalUsers, // Menggunakan total count dari database
             search,
-            roleFilter
+            roleFilter,
+            userLogin
 
         });
     } catch (error) {
@@ -91,29 +95,99 @@ exports.toggleUserStatus = async (req, res) => {
   };
 
 
-exports.showDashboard = async (req, res) => {
+  exports.showDashboard = async (req, res) => {
     try {
-        // Ambil semua pengguna dari database
-        const users = await User.findAll();
-
-        // Ambil data admin yang sedang login dari database
-        const admin = await User.findByPk(req.session.user.id_user);
-        const fullname = admin ? admin.fullname : 'Admin';
-        const foto = req.session.user.foto;
-
-        // Format data pengguna
-        const formattedUsers = users.map(user => ({
-            ...user.toJSON(),
-            tanggal_masuk: user.tanggal_masuk ? new Date(user.tanggal_masuk).toISOString().split('T')[0] : null
-        }));
-
-        // Kirim data pengguna dan fullname ke view
-        res.render('admin/dashboard-admin', { users: formattedUsers, fullname, foto, user: admin });
+      // Ambil data user dan asset seperti sebelumnya
+      const users = await User.findAll();
+      const admin = await User.findByPk(req.session.user.id_user);
+      const fullname = admin ? admin.fullname : 'Admin';
+      const foto = req.session.user.foto;
+      const userLogin = await User.findByPk(req.session.user.id_user);
+  
+      const totalAdmin = await User.count({ where: { role: 'admin' } });
+      const totalUser = await User.count({ where: { role: 'user' } });
+      const totalAsset = await Asset.count();
+  
+      // Filter tahun dari query, default ke tahun sekarang
+      const selectedYear = req.query.year ? parseInt(req.query.year) : new Date().getFullYear();
+  
+      // Query untuk pengaduan dengan status "closed"
+      const closedDataResult = await DaftarMasalah.findAll({
+        attributes: [
+          [fn('MONTH', col('tanggal_kejadian')), 'month'],
+          [fn('COUNT', col('id_daftar_masalah')), 'count']
+        ],
+        where: {
+          status: 'close',
+          tanggal_kejadian: {
+            [Op.between]: [new Date(selectedYear, 0, 1), new Date(selectedYear, 11, 31)]
+          }
+        },
+        group: [fn('MONTH', col('tanggal_kejadian'))],
+        raw: true
+      });
+  
+      // Query untuk pengaduan dengan status "open"
+      const openDataResult = await DaftarMasalah.findAll({
+        attributes: [
+          [fn('MONTH', col('tanggal_kejadian')), 'month'],
+          [fn('COUNT', col('id_daftar_masalah')), 'count']
+        ],
+        where: {
+          status: 'open',
+          tanggal_kejadian: {
+            [Op.between]: [new Date(selectedYear, 0, 1), new Date(selectedYear, 11, 31)]
+          }
+        },
+        group: [fn('MONTH', col('tanggal_kejadian'))],
+        raw: true
+      });
+  
+      // Buat array 12 elemen untuk tiap bulan (default 0)
+      const dataClosed = Array(12).fill(0);
+      const dataOpen = Array(12).fill(0);
+  
+      closedDataResult.forEach(item => {
+        const month = item.month; // 1 - 12
+        dataClosed[month - 1] = parseInt(item.count);
+      });
+  
+      openDataResult.forEach(item => {
+        const month = item.month;
+        dataOpen[month - 1] = parseInt(item.count);
+      });
+  
+      // Contoh: buat array tahun untuk dropdown filter
+      const availableYears = [selectedYear - 1, selectedYear, selectedYear + 1];
+  
+      // Format data pengguna (jika diperlukan)
+      const formattedUsers = users.map(user => ({
+        ...user.toJSON(),
+        tanggal_masuk: user.tanggal_masuk ? new Date(user.tanggal_masuk).toISOString().split('T')[0] : null
+      }));
+  
+      res.render('admin/dashboard-admin', {
+        users: formattedUsers,
+        fullname,
+        foto,
+        user: admin,
+        userLogin,
+        totalAdmin,
+        totalUser,
+        totalAsset,
+        labelsBulan: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+        dataClosed,
+        dataOpen,
+        selectedYear,
+        availableYears
+      });
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Server error.');
+      console.error(error);
+      res.status(500).send('Server error.');
     }
-};
+};  
+
+
 
 // Show form to create a new user
 exports.showCreateUserForm = (req, res) => {
@@ -148,11 +222,15 @@ exports.createUser = async (req, res) => {
 exports.showEditUserForm = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
+        const userLogin = await User.findByPk(req.session.user.id_user);
         const formattedUser = {
             ...user.toJSON(),
             tanggal_masuk: user.tanggal_masuk ? new Date(user.tanggal_masuk).toISOString().split('T')[0] : null
         };
-        res.render('admin/edit-user', { user: formattedUser });
+        res.render('admin/edit-user', { 
+            user: formattedUser,
+            userLogin
+        });
     } catch (error) {
         console.error(error);
         res.status(500).send('Server error.');

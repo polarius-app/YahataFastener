@@ -10,7 +10,7 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Yahata_Neji_Corporation_Logo.svg/2560px-Yahata_Neji_Corporation_Logo.svg.png" alt="Yahata Logo" class="w-32">
       </div>
       <ul>
-        <% if (user.role === 'admin') { %>
+        <% if (userLogin.role === 'admin') { %>
           <div class="dashboard">
             <li class="mt-20 mb-12 font-regular text-l">
               <a href="/admin/dashboard" class="flex items-left justify-left">
@@ -44,7 +44,7 @@
 
             <div class="kelolaasset mb-6">
               <li class="font-regular text-l">
-                <a href="/asset/new" class="flex items-left justify-left">
+                <a href="/asset/" class="flex items-left justify-left">
                   <i class="fi fi-rr-briefcase text-xl mr-1"></i>
                   <span class="ml-2">Asset</span>
                 </a>
