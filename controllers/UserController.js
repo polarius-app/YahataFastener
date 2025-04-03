@@ -18,7 +18,7 @@ exports.showDashboard = (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
     }
-    res.render('dashboard', { title: 'Dashboard', user: req.session.user });
+    res.render('dashboard', { title: 'Dashboard', user: req.session.user,userLogin: req.session.user });
 };
 
 exports.login = async (req, res) => {
