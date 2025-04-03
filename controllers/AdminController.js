@@ -2,6 +2,7 @@ const User = require('../models/User');
 const { Op, where, fn, col } = require('sequelize');
 const Asset = require('../models/Asset');
 const DaftarMasalah = require('../models/DaftarMasalah');
+const bcrypt = require('bcrypt');
 
 exports.showUser = async (req, res) => {
     try {
@@ -107,6 +108,9 @@ exports.toggleUserStatus = async (req, res) => {
       const totalAdmin = await User.count({ where: { role: 'admin' } });
       const totalUser = await User.count({ where: { role: 'user' } });
       const totalAsset = await Asset.count();
+
+      const totalClosedPengaduan = await DaftarMasalah.count({ where: { status: 'close' } });
+      const totalOpenPengaduan = await DaftarMasalah.count({ where: { status: 'open' } });
   
       // Filter tahun dari query, default ke tahun sekarang
       const selectedYear = req.query.year ? parseInt(req.query.year) : new Date().getFullYear();
@@ -179,7 +183,9 @@ exports.toggleUserStatus = async (req, res) => {
         dataClosed,
         dataOpen,
         selectedYear,
-        availableYears
+        availableYears,
+        totalClosedPengaduan,
+        totalOpenPengaduan
       });
     } catch (error) {
       console.error(error);
@@ -190,12 +196,22 @@ exports.toggleUserStatus = async (req, res) => {
 
 
 // Show form to create a new user
-exports.showCreateUserForm = (req, res) => {
-    res.render('admin/create-user');
+exports.showCreateUserForm = async (req, res) => {
+  try {
+      const userLogin = await User.findByPk(req.session.user.id_user);
+      res.render('admin/create-user', {
+          title: 'Create User',
+          userLogin, // Kirim userLogin ke view
+          user : userLogin
+      });
+  } catch (error) {
+      console.error('Error rendering create user form:', error);
+      res.status(500).send('Server error.');
+  }
 };
-
 // Create a new user
 exports.createUser = async (req, res) => {
+    const userLogin = await User.findByPk(req.session.user.id_user);
     const { fullname, username, password, role, jabatan, tanggal_masuk, status } = req.body;
     const foto = req.file ? req.file.buffer : null; // Ambil foto jika ada
 
@@ -209,7 +225,8 @@ exports.createUser = async (req, res) => {
             jabatan,
             tanggal_masuk,
             status,
-            foto
+            foto,
+            userLogin
         });
         res.redirect('/admin/users');
     } catch (error) {

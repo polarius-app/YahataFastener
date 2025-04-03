@@ -66,7 +66,7 @@
       </div>
 
       <!-- White Box Container untuk Filter & Tabel -->
-      <div class=" p-4 rounded-lg bg-white">
+      <div class=" p-4 rounded-lg bg-white ">
         <!-- Filter Area: Search, Dropdown Periode & Dropdown ISP -->
         <div class="flex flex-col sm:flex-row items-start sm:items-end space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
           <div class="relative">
@@ -83,10 +83,12 @@
           </div>
           <div class="relative">
             <select name="periodeFilter" onchange="filterByPeriode(this.value)" class="block w-24 bg-gray-100 pl-2 pr-8 py-2 rounded-lg text-sm text-gray-500 focus:outline-none appearance-none">
-              <option value="">Periode</option>
-              <option value="2023" <%= typeof periodeFilter !== 'undefined' && periodeFilter === '2023' ? 'selected' : '' %>>2023</option>
-              <option value="2022" <%= typeof periodeFilter !== 'undefined' && periodeFilter === '2022' ? 'selected' : '' %>>2022</option>
-              <option value="2021" <%= typeof periodeFilter !== 'undefined' && periodeFilter === '2021' ? 'selected' : '' %>>2021</option>
+              <option value="">All Periode</option> <!-- Tambahkan opsi ini -->
+              <% periodeList.forEach(periode => { %>
+                <option value="<%= periode.tahun_periode %>" <%= periodeFilter === periode.tahun_periode ? 'selected' : '' %>>
+                  <%= periode.tahun_periode %>
+                </option>
+              <% }) %>
             </select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500">
               <i class="fi fi-rr-angle-small-down inline-flex items-center justify-center"></i>
@@ -94,9 +96,12 @@
           </div>
           <div class="relative">
             <select name="ispFilter" onchange="filterByIsp(this.value)" class="block w-24 bg-gray-100 pl-2 pr-8 py-2 rounded-lg text-sm text-gray-500 focus:outline-none appearance-none">
-              <option value="">ISP</option>
-              <option value="1" <%= typeof ispFilter !== 'undefined' && ispFilter === '1' ? 'selected' : '' %>>ISP 1</option>
-              <option value="2" <%= typeof ispFilter !== 'undefined' && ispFilter === '2' ? 'selected' : '' %>>ISP 2</option>
+              <option value="">All ISP</option> <!-- Tambahkan opsi ini -->
+              <% ispList.forEach(isp => { %>
+                <option value="<%= isp.isp_periode %>" <%= ispFilter === isp.isp_periode ? 'selected' : '' %>>
+                  <%= isp.isp_periode %>
+                </option>
+              <% }) %>
             </select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500">
               <i class="fi fi-rr-angle-small-down inline-flex items-center justify-center"></i>
@@ -105,7 +110,7 @@
         </div>
 
         <!-- Tabel Pengaduan dengan Overflow Horizontal -->
-        <div class="overflow-x-auto overflow-y-auto max-h-[670px] ">
+        <div class="overflow-x-auto overflow-y-auto h-[655px] ">
           <table class="min-w-full text-gray-800">
             <thead>
               <tr class="bg-white">
@@ -147,16 +152,24 @@
                 </td>
                 <td class="px-4 py-2 text-sm"><%= item.kendala_masalah %></td>
                 <!-- Kolom Perbaikan: Box untuk waktu dan tanggal -->
-                <td class="px-4 py-2 text-sm space-y-1">
-                  <div class="bg-gray-50 p-2 flex items-center rounded">
-                    <i class="fi fi-rr-clock-three inline-flex items-center justify-center text-gray-800 mr-2"></i>
-                    <span><%= item.waktu_perbaikan ? item.waktu_perbaikan : '-' %></span>
-                  </div>
-                  <div class="bg-gray-50 p-2 flex items-center rounded">
-                    <i class="fi fi-rr-calendar-lines inline-flex items-center justify-center text-gray-800 mr-2"></i>
-                    <span><%= item.tanggal_perbaikan ? formatTanggal(item.tanggal_perbaikan) : '-' %></span>
-                  </div>
-                </td>
+<td class="px-4 py-2 text-sm space-y-1">
+  <div class="bg-gray-50 p-2 flex items-center rounded">
+    <i class="fi fi-rr-clock-three inline-flex items-center justify-center text-gray-800 mr-2"></i>
+    <% if(item.waktu_perbaikan) { %>
+      <span><%= item.waktu_perbaikan %></span>
+    <% } else { %>
+      <span class="text-green-500">Menunggu Konfirmasi</span>
+    <% } %>
+  </div>
+  <div class="bg-gray-50 p-2 flex items-center rounded">
+    <i class="fi fi-rr-calendar-lines inline-flex items-center justify-center text-gray-800 mr-2"></i>
+    <% if(item.tanggal_perbaikan) { %>
+      <span><%= formatTanggal(item.tanggal_perbaikan) %></span>
+    <% } else { %>
+      <span class="text-green-500">Menunggu Konfirmasi</span>
+    <% } %>
+  </div>
+</td>
                 <!-- Kolom Status: Toggle switch status open/close -->
                 <td class="px-4 py-2">
                   <div class="relative inline-block w-12 h-6 bg-gray-800 rounded-full cursor-pointer" 
@@ -176,7 +189,16 @@
                     <% } %>
                   </div>
                 </td>
-                <td class="px-4 py-2 text-sm"><%= item.keterangan ? item.keterangan : '-' %></td>
+
+                <!-- Kolom Keterangan -->
+<td class="px-4 py-2 text-sm">
+  <% if(item.keterangan) { %>
+    <%= item.keterangan %>
+  <% } else { %>
+    <span class="text-green-500">Menunggu Konfirmasi</span>
+  <% } %>
+</td>
+
                 <!-- Kolom Aksi: Edit & Hapus (vertikal terpusat dengan row) -->
                 <td class="px-4 py-2 text-sm">
                   <div class="flex items-center justify-center space-x-2">
@@ -213,7 +235,7 @@
 
   <!-- Modal Konfirmasi Hapus -->
   <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-80">
+    <div class="bg-white rounded-lg  p-6 w-80">
       <h2 class="text-xl font-bold mb-4 text-gray-800">Konfirmasi Hapus</h2>
       <p class="mb-6 text-gray-600">Anda yakin ingin menghapus pengaduan ini?</p>
       <div class="flex justify-end space-x-4">
@@ -224,6 +246,8 @@
   </div>
 
   <script>
+    let debounceTimeout;
+
     function searchPengaduan(query) {
       const searchParams = new URLSearchParams(window.location.search);
       searchParams.set('search', query);
@@ -268,6 +292,32 @@
         console.error('Error:', err);
         alert('Terjadi kesalahan saat memperbarui status.');
       }
+    }
+    function searchPengaduan(query) {
+      const searchParams = new URLSearchParams(window.location.search);
+      searchParams.set('search', query);
+      window.location.search = searchParams.toString();
+    }
+    function filterByPeriode(periode) {
+      const searchParams = new URLSearchParams(window.location.search);
+      searchParams.set('periodeFilter', periode);
+      window.location.search = searchParams.toString();
+    }
+    function filterByIsp(isp) {
+      const searchParams = new URLSearchParams(window.location.search);
+      searchParams.set('ispFilter', isp);
+      window.location.search = searchParams.toString();
+    }
+    function searchPengaduan(query) {
+    // Hapus timeout sebelumnya
+      clearTimeout(debounceTimeout);
+
+      // Set timeout baru untuk menunda eksekusi
+      debounceTimeout = setTimeout(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.set('search', query);
+        window.location.search = searchParams.toString();
+      }, 1000); // Jeda 1 detik
     }
   </script>
 </body>

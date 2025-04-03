@@ -41,8 +41,6 @@
         <% } %>
         <h2 class="text-2xl font-semibold">Welcome, <%= fullname %>!</h2>
       </div>
-      
-      <p class="text-lg mb-4">Ini adalah Dashboard Admin.</p>
 
       <!-- KPI Cards -->
       <div class="grid grid-cols-3 gap-4 mb-8">
@@ -65,6 +63,22 @@
           <div>
             <p class="text-sm text-gray-500">Total Asset</p>
             <p class="text-xl font-bold"><%= totalAsset %></p>
+          </div>
+        </div>
+        <!-- Card Pengaduan Open -->
+        <div class="bg-white p-4 rounded-lg shadow flex items-center">
+          <i class="fi fi-rr-exclamation text-3xl text-orange-600 mr-4"></i>
+          <div>
+            <p class="text-sm text-gray-500">Pengaduan Open</p>
+            <p class="text-xl font-bold"><%= totalOpenPengaduan %></p>
+          </div>
+        </div>
+        <!-- Card Pengaduan Closed -->
+        <div class="bg-white p-4 rounded-lg shadow flex items-center">
+          <i class="fi fi-rr-check text-3xl text-green-600 mr-4"></i>
+          <div>
+            <p class="text-sm text-gray-500">Pengaduan Close</p>
+            <p class="text-xl font-bold"><%= totalClosedPengaduan %></p>
           </div>
         </div>
       </div>

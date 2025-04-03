@@ -70,6 +70,7 @@ exports.showRegister = (req, res) => {
 exports.register = [
     upload.single('foto'), // Menangani upload foto
     async (req, res) => {
+        const userLogin = await User.findByPk(req.session.user.id_user);
         const { username, password, fullname, jabatan, tanggal_masuk } = req.body;
         const foto = req.file ? req.file.buffer : null; // Ambil foto sebagai buffer
 
@@ -95,7 +96,8 @@ exports.register = [
                 fullname,
                 jabatan,
                 tanggal_masuk,
-                foto // Simpan foto sebagai BLOB
+                foto, // Simpan foto sebagai BLOB
+                userLogin
             });
 
             // Redirect ke halaman login setelah registrasi berhasil

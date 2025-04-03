@@ -72,24 +72,69 @@ exports.simpanPengaduan = async (req, res) => {
   
 exports.daftarPengaduan = async (req, res) => {
   try {
+    const search = req.query.search || ''; // Query untuk pencarian
+    const periodeFilter = req.query.periodeFilter || ''; // Query untuk filter periode
+    const ispFilter = req.query.ispFilter || ''; // Query untuk filter ISP
     const userLogin = await User.findByPk(req.session.user.id_user); // Ambil data user yang sedang login
-    // Ambil semua data pengaduan termasuk relasi kategori & periode
+
+    // Kondisi pencarian dan filter
+    const whereCondition = {
+      [Op.and]: [
+        {
+          [Op.or]: [
+            { nama: { [Op.like]: `%${search}%` } },
+            { departemen: { [Op.like]: `%${search}%` } },
+            { kendala_masalah: { [Op.like]: `%${search}%` } }
+          ]
+        }
+      ]
+    };
+
+    // Tambahkan filter periode jika ada
+    if (periodeFilter) {
+      whereCondition[Op.and].push({ '$periode.tahun_periode$': periodeFilter });
+    }
+
+    // Tambahkan filter ISP jika ada
+    if (ispFilter) {
+      whereCondition[Op.and].push({ '$periode.isp_periode$': ispFilter });
+    }
+
+    // Ambil data pengaduan dari database
     const daftar = await DaftarMasalah.findAll({
+      where: whereCondition,
       include: [
         { model: KategoriMasalah, as: 'kategori' },
         { model: Periode, as: 'periode' }
-      ],
-      order: [['id_daftar_masalah', 'DESC']]
+      ]
+    });
+
+    // Ambil daftar periode dan ISP dari tabel Periode
+    const periodeList = await Periode.findAll({
+      attributes: ['tahun_periode'], // Ambil hanya kolom tahun_periode
+      group: ['tahun_periode'], // Hilangkan duplikat
+      raw: true
+    });
+
+    const ispList = await Periode.findAll({
+      attributes: ['isp_periode'], // Ambil hanya kolom isp_periode
+      group: ['isp_periode'], // Hilangkan duplikat
+      raw: true
     });
 
     res.render('pengaduan/pengaduan_daftar', {
-      title: 'Daftar Pengaduan Masalah',
+      title: 'Daftar Pengaduan',
       daftar,
-      user: req.session.user, // Kirim data user ke view jika diperlukan
-      userLogin
+      search,
+      periodeFilter,
+      ispFilter,
+      periodeList, // Kirim daftar periode ke view
+      ispList, // Kirim daftar ISP ke view
+      userLogin,
+      user: req.session.user // Kirim data user ke view jika diperlukan
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching daftar pengaduan:', error);
     res.status(500).send('Server error.');
   }
 };

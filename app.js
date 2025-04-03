@@ -47,11 +47,23 @@ app.use('/asset', assetRoutes);
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000');
 });
-//Auto ShutDown Server dalam 2,5 jam dari sekarang
-// const shutdownTime = 2.5 * 60 * 60 * 1000; // 2.5 hours in milliseconds
+// // Auto ShutDown Server dalam 5 jam dari sekarang
+// const shutdownTime = 5 * 60 * 60 * 1000; // 5 hours in milliseconds
+
+// // Countdown: menampilkan sisa waktu setiap detik
+// let remainingTime = shutdownTime;
+// const countdownInterval = setInterval(() => {
+//   remainingTime -= 1000;
+//   if (remainingTime < 0) remainingTime = 0;
+//   const hours = Math.floor(remainingTime / (60 * 60 * 1000));
+//   const minutes = Math.floor((remainingTime % (60 * 60 * 1000)) / (60 * 1000));
+//   const seconds = Math.floor((remainingTime % (60 * 1000)) / 1000);
+//   console.log(`Waktu tersisa: ${hours} jam ${minutes} menit ${seconds} detik`);
+//   if (remainingTime <= 0) clearInterval(countdownInterval);
+// }, 1000);
 
 // setTimeout(() => {
-//   console.log('Server akan dimatikan sekarang setelah 2,5 jam. Menyimpan semua perubahan dan shutdown secara graceful...');
+//   console.log('Server akan dimatikan sekarang setelah 5 jam. Menyimpan semua perubahan dan shutdown secara graceful...');
 //   // Tutup koneksi database jika diperlukan
 //   sequelize.close()
 //     .then(() => {

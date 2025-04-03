@@ -21,19 +21,19 @@
     <!-- Konten Utama -->
     <main class="content p-10">
       <!-- Breadcrumb Navigation -->
-      <nav class="text-sm mb-2 flex space-x-2 items-center">
-        <a href="/admin/dashboard" class="flex items-center text-gray-500 hover:text-gray-700">
-          <i class="fi fi-rr-house-chimney mr-2"></i>
+      <nav class="text-sm mb-2 flex space-x-2 justify-left items-center text-center">
+        <a href="/admin/dashboard" class="flex items-center text-gray-500 font-regular hover:text-gray-700">
+          <i class="fi fi-rr-house-chimney mr-2 inline-flex items-center justify-center text-gray-500"></i>
           <span>Dashboard</span>
         </a>
-        <i class="fi fi-rr-angle-small-right text-sm text-gray-500"></i>
-        <a href="/admin/users" class="flex items-center text-gray-500 hover:text-gray-700">
-          <i class="fi fi-rr-users mr-2"></i>
+        <i class="fi fi-rr-angle-small-right text-sm text-gray-500 inline-flex items-center justify-center"></i>
+        <a href="/admin/users" class="flex items-center text-gray-500 font-regular hover:text-gray-700">
+          <i class="fi fi-rr-users mr-2 inline-flex items-center justify-center text-gray-500"></i>
           <span>Users</span>
         </a>
-        <i class="fi fi-rr-angle-small-right text-sm text-gray-500"></i>
-        <a href="#" class="flex items-center text-gray-800">
-          <i class="fi fi-rr-user-plus mr-2"></i>
+        <i class="fi fi-rr-angle-small-right text-sm text-gray-500 inline-flex items-center justify-center"></i>
+        <a href="#" class="flex items-center text-gray-800 font-medium">
+          <i class="fi fi-rr-user-add mr-2 inline-flex items-center justify-center text-gray-800"></i>
           <span>Create User</span>
         </a>
       </nav>
@@ -45,7 +45,7 @@
       </div>
       
       <!-- Form Container -->
-      <div class="bg-white p-6 rounded">
+      <div class="bg-white p-6 rounded-lg">
         <form action="/admin/users/create" method="POST" enctype="multipart/form-data" class="space-y-6">
           <!-- Row: Kolom kiri dan kanan -->
           <div class="flex flex-col lg:flex-row gap-6">
@@ -53,45 +53,46 @@
             <div class="w-full lg:w-1/2 space-y-6">
               <!-- Full Name -->
               <div>
-                <label class="block text-gray-700 font-medium mb-1">Full Name</label>
+                <label class="block text-gray-800 font-medium mb-1">Full Name</label>
                 <div class="inline-flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2 w-full">
-                  <i class="fi fi-rr-id-badge text-gray-800 mr-2"></i>
-                  <input type="text" name="fullname" placeholder="Tuliskan nama lengkap user" required maxlength="50"
-                         class="w-full bg-transparent outline-none">
+                  <i class="fi fi-rr-id-badge text-gray-800 mr-2 inline-flex items-center justify-center"></i>
+                  <input type="text" name="fullname" placeholder="Full Name" required maxlength="50"
+                         class="w-full bg-transparent outline-none text-gray-800">
                 </div>
               </div>
-              
+
               <!-- Username -->
               <div>
-                <label class="block text-gray-700 font-medium mb-1">Username</label>
+                <label class="block text-gray-800 font-medium mb-1">Username</label>
                 <div class="inline-flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2 w-full">
-                  <i class="fi fi-rr-fingerprint text-gray-800 mr-2"></i>
-                  <input type="text" name="username" placeholder="Tuliskan username" required maxlength="10"
-                         class="w-full bg-transparent outline-none">
+                  <i class="fi fi-rr-fingerprint text-gray-800 mr-2 inline-flex items-center justify-center"></i>
+                  <input type="text" name="username" placeholder="Username" required maxlength="10"
+                         class="w-full bg-transparent outline-none text-gray-800">
                 </div>
               </div>
               
               <!-- Password -->
               <div>
-                <label class="block text-gray-700 font-medium mb-1">Password</label>
+                <label class="block text-gray-800 font-medium mb-1">Password</label>
                 <div class="inline-flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2 w-full">
-                  <i class="fi fi-rr-key-skeleton text-gray-800 mr-2"></i>
+                  <i class="fi fi-rr-password-lock text-gray-800 mr-2 inline-flex items-center justify-center"></i>
                   <input type="password" name="password" placeholder="Masukkan password" required
-                         class="w-full bg-transparent outline-none">
+                         class="w-full bg-transparent outline-none text-gray-800">
                 </div>
               </div>
               
               <!-- Role -->
               <div>
-                <label class="block text-gray-700 font-medium mb-1">Role</label>
+                <label class="block text-gray-800 font-medium mb-1">Role</label>
                 <div class="inline-flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2 w-full relative">
-                  <i class="fi fi-rr-user-gear text-gray-800 mr-2"></i>
-                  <select name="role" required class="w-full bg-transparent outline-none appearance-none">
+                  <i class="fi fi-rr-user-gear text-gray-800 mr-2 inline-flex items-center justify-center"></i>
+                  <select name="role" required 
+                          class="w-full bg-transparent outline-none appearance-none text-gray-800">
                     <option value="admin">Admin</option>
                     <option value="user" selected>User</option>
                   </select>
                   <!-- Dropdown Icon -->
-                  <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-800">
                     <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
                          viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -103,10 +104,11 @@
               
               <!-- Jabatan -->
               <div>
-                <label class="block text-gray-700 font-medium mb-1">Jabatan</label>
+                <label class="block text-gray-800 font-medium mb-1">Jabatan</label>
                 <div class="inline-flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2 w-full relative">
-                  <i class="fi fi-rr-rank text-gray-800 mr-2"></i>
-                  <select name="jabatan" required class="w-full bg-transparent outline-none appearance-none">
+                  <i class="fi fi-rr-rank text-gray-800 mr-2 inline-flex items-center justify-center"></i>
+                  <select name="jabatan" required 
+                          class="w-full bg-transparent outline-none appearance-none text-gray-800">
                     <option value="Manager">Manager</option>
                     <option value="Supervisor">Supervisor</option>
                     <option value="Staff" selected>Staff</option>
@@ -124,20 +126,21 @@
               
               <!-- Tanggal Masuk -->
               <div>
-                <label class="block text-gray-700 font-medium mb-1">Tanggal Masuk</label>
+                <label class="block text-gray-800 font-medium mb-1">Tanggal Masuk</label>
                 <div class="inline-flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2 w-full">
-                  <i class="fi fi-rr-calendar-lines text-gray-800 mr-2"></i>
+                  <i class="fi fi-rr-calendar-lines text-gray-800 mr-2 inline-flex items-center justify-center"></i>
                   <input type="date" name="tanggal_masuk" required
-                         class="w-full bg-transparent outline-none">
+                         class="w-full bg-transparent outline-none text-gray-800">
                 </div>
               </div>
               
               <!-- Status -->
               <div>
-                <label class="block text-gray-700 font-medium mb-1">Status</label>
+                <label class="block text-gray-800 font-medium mb-1">Status</label>
                 <div class="inline-flex items-center justify-center bg-gray-50 rounded-lg px-3 py-2 w-full relative">
-                  <i class="fi fi-rr-toggle-on text-gray-800 mr-2"></i>
-                  <select name="status" required class="w-full bg-transparent outline-none appearance-none">
+                  <i class="fi fi-rr-toggle-on text-gray-800 mr-2 inline-flex items-center justify-center"></i>
+                  <select name="status" required 
+                          class="w-full bg-transparent outline-none appearance-none text-gray-800">
                     <option value="aktif" selected>Aktif</option>
                     <option value="tidak_aktif">Tidak Aktif</option>
                   </select>
@@ -158,13 +161,13 @@
               <div class="flex flex-col items-center space-y-4">
                 <!-- Foto Placeholder -->
                 <div class="w-[28rem] h-[28rem] rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-                  <img src="https://via.placeholder.com/448" alt="Default Profile" class="w-full h-full object-cover">
+                  <img id="previewImage" src="https://via.placeholder.com/448" alt="Default Profile" class="w-full h-full object-cover">
                 </div>
                 <!-- Label dan Tombol Choose File -->
                 <div class="w-full">
-                  <label class="block text-gray-700 font-medium mb-1">Foto</label>
-                  <label for="foto" class="cursor-pointer inline-flex items-center justify-start bg-gray-50 text-gray-800 rounded-lg px-3 py-2 w-full">
-                    <i class="fi fi-rr-portrait mr-2"></i>
+                  <label class="block text-gray-800 font-medium mb-1">Foto</label>
+                  <label for="foto" class="cursor-pointer inline-flex items-center justify-start bg-gray-50 text-gray-800 font-regular rounded-lg px-3 py-2 w-full">
+                    <i class="fi fi-rr-portrait mr-2 inline-flex items-center justify-center"></i>
                     Choose File
                   </label>
                   <input type="file" id="foto" name="foto" accept="image/*" class="hidden">
@@ -175,8 +178,8 @@
           
           <!-- Submit Button -->
           <div>
-            <button type="submit" class="inline-flex items-center justify-center bg-gray-800 text-white rounded-lg px-3 py-2 w-full">
-              <i class="fi fi-rr-disk mr-2"></i>
+            <button type="submit" class="inline-flex items-center justify-center bg-gray-800 text-white font-regular rounded-lg px-3 py-2 w-full">
+              <i class="fi fi-rr-disk mr-2 inline-flex items-center justify-center"></i>
               Create
             </button>
           </div>
@@ -189,5 +192,19 @@
       <%- include('../partials/rightsidebar') %>
     </div>
   </div>
+
+  <!-- JavaScript untuk preview gambar -->
+  <script>
+    document.getElementById('foto').addEventListener('change', function(event) {
+      const input = event.target;
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewImage').src = e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    });
+  </script>
 </body>
 </html>

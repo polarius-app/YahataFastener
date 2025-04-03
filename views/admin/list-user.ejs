@@ -61,6 +61,59 @@
       
 <!-- Sub Judul dengan margin top yang sama dengan margin bottom breadcrumb -->
 <p class="text-gray-600 mt-2">List Semua Users yang Tersedia</p>
+
+
+
+
+<!-- Note Container dengan tombol close -->
+<div id="note-container" class="relative flex items-start p-4 mt-5 mb-7 text-sm text-yellow-500 bg-white rounded-lg font-thinregular" role="alert">
+  <i class="fi fi-rr-edit text-2xl mr-3 mt-1"></i>
+  <div>
+    <span class="font-semibold text-xl text-gray-800 leading-tight">Note:</span>
+    <ul class="list-disc pl-5 text-gray-700 text-lg">
+      <li>Toggle Status berfungsi untuk mengubah status. Toggle ke arah kiri menjadi <strong>tidak aktif</strong>, Toggle ke arah kanan menjadi <strong>aktif</strong>.</li>
+      <li>Untuk mengedit user secara detail, klik pada username user tersebut.</li>
+    </ul>
+  </div>
+  <!-- Tombol Close di pojok kanan -->
+  <button id="close-note" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none">&times;</button>
+</div>
+<script>
+  // Script untuk menyembunyikan Note dengan animasi naik dan fade-out saat tombol close diklik
+  document.getElementById('close-note').addEventListener('click', function() {
+    const noteContainer = document.getElementById('note-container');
+    
+    // Tambahkan animasi fade-out dan naik ke atas dengan transisi lebih smooth
+    noteContainer.style.transition = 'opacity 1s ease-in-out, transform 1s ease-in-out';
+    noteContainer.style.opacity = '0';
+    noteContainer.style.transform = 'translateY(-30px)';
+    
+    setTimeout(function() {
+      noteContainer.style.display = 'none';
+      
+      // Update tinggi White Box Container dengan animasi naik lebih smooth
+      const boxputih = document.querySelector('.boxputih');
+      boxputih.style.transition = 'height 1s ease-in-out, transform 1s ease-in-out';
+      boxputih.classList.remove('h-[630px]');
+      boxputih.classList.add('h-[730px]');
+      boxputih.style.transform = 'translateY(-15px)';
+      
+      // Update tinggi tabel dengan animasi naik lebih smooth
+      const tabelputih = document.querySelector('.tabelputih');
+      tabelputih.style.transition = 'height 1s ease-in-out, transform 1s ease-in-out';
+      tabelputih.classList.remove('h-[510px]');
+      tabelputih.classList.add('h-[610px]');
+      tabelputih.style.transform = 'translateY(-15px)';
+    }, 400);
+  });
+</script>
+
+
+
+
+
+
+
 </div>
 
 
@@ -76,7 +129,7 @@
       </div> -->
 
       <!-- White Box Container (gabungan: search & role, tabel, pagination) -->
-      <div class="bg-white p-4 rounded-lg h-[735px]">
+      <div class="boxputih bg-white p-4 rounded-lg h-[630px]">
         <!-- Div: Search Bar & Role Filter -->
         <div class="flex flex-col sm:flex-row items-start sm:items-end space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
           <!-- Search Bar dengan Icon -->
@@ -129,7 +182,7 @@
         </div>
 
         <!-- Div: Tabel Data User tanpa garis -->
-        <div class="mb-4 overflow-x-auto overflow-y-auto ">
+        <div class="tabelputih mb-4 overflow-x-auto overflow-y-auto h-[510px]">
           <table class="min-w-full text-gray-800">
             <thead>
               <tr>
@@ -274,15 +327,29 @@
 
         <!-- Div: Pagination (hanya menampilkan < 1 2 >, tombol bulat sempurna) -->
         <div class="inline-flex justify-start items-center space-x-1">
+          <!-- Tombol sebelumnya -->
           <a href="?page=<%= currentPage > 1 ? currentPage - 1 : 1 %>" class="flex items-center justify-center w-6 h-6 rounded-full">
-            <i class="fi fi-rr-angle-small-left  text-gray-500 inline-flex items-center justify-center"></i>
+            <i class="fi fi-rr-angle-small-left text-gray-500 inline-flex items-center justify-center"></i>
           </a>
+        
+          <!-- Nomor halaman dari 1 hingga 10 -->
           <a href="?page=1" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 1 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">1</a>
           <a href="?page=2" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 2 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">2</a>
-          <a href="?page=<%= currentPage < totalPages ? currentPage + 1 : totalPages %>" class="flex items-center justify-center w-6 h-6 rounded-full">
-            <i class="fi fi-rr-angle-small-right  text-gray-500 inline-flex items-center justify-center"></i>
+          <a href="?page=3" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 3 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">3</a>
+          <a href="?page=4" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 4 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">4</a>
+          <a href="?page=5" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 5 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">5</a>
+          <a href="?page=6" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 6 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">6</a>
+          <a href="?page=7" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 7 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">7</a>
+          <a href="?page=8" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 8 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">8</a>
+          <a href="?page=9" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 9 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">9</a>
+          <a href="?page=10" class="flex items-center justify-center w-6 h-6 rounded-full text-sm <%= currentPage == 10 ? 'bg-gray-800 text-white' : 'bg-white text-gray-800' %>">10</a>
+        
+          <!-- Tombol berikutnya -->
+          <a href="?page=<%= currentPage < 10 ? currentPage + 1 : 10 %>" class="flex items-center justify-center w-6 h-6 rounded-full">
+            <i class="fi fi-rr-angle-small-right text-gray-500 inline-flex items-center justify-center"></i>
           </a>
         </div>
+        
         
 
         
